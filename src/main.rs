@@ -4,7 +4,10 @@ Date: 2026-04-15
 Program Details: Main screen manager
 */
 
-mod modules;
+mod classes;
+mod maps;
+mod ui;
+mod screens;
 
 use macroquad::prelude::*;
 
@@ -12,8 +15,8 @@ use macroquad::prelude::*;
 fn window_conf() -> Conf {
     Conf {
         window_title: "poultry_wars".to_string(),
-        window_width: 1024,
-        window_height: 768,
+        window_width: 1280,
+        window_height: 960,
         fullscreen: false,
         high_dpi: true,
         window_resizable: true,
@@ -24,13 +27,18 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    
+    let mut current_screen = "screen1".to_string();
+    let mut last_switch = get_time() - 0.02;
+
     loop {
-        clear_background(RED);
-
-        draw_line(40.0, 40.0, 100.0, 200.0, 15.0, BLUE);
-        draw_rectangle(screen_width() / 2.0 - 60.0, 100.0, 120.0, 60.0, GREEN);
-
+        if get_time() - last_switch > 0.01 {
+            current_screen = match current_screen.as_str() {
+                "screen1" => screens::screen1::run().await,
+                "first_game" => screens::first_game::run().await,
+                _ => break,
+            };
+            last_switch = get_time();
+        }
         next_frame().await;
     }
 }
