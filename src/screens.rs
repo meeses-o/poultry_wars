@@ -3,4 +3,5 @@
 //Mod file for screens
 
 pub mod screen1;
-pub mod first_game;
+pub mod game;
+pub mod login;

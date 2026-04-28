@@ -8,6 +8,7 @@ mod classes;
 mod maps;
 mod ui;
 mod screens;
+mod databasing;
 
 use macroquad::prelude::*;
 
@@ -34,7 +35,7 @@ async fn main() {
         if get_time() - last_switch > 0.01 {
             current_screen = match current_screen.as_str() {
                 "screen1" => screens::screen1::run().await,
-                "first_game" => screens::first_game::run().await,
+                "game" => screens::game::run().await,
                 _ => break,
             };
             last_switch = get_time();
