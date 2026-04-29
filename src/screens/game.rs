@@ -9,17 +9,21 @@ use crate::classes::chicken::Chicken;
 use crate::maps::map1::Map1;
 
 pub async fn run() -> String{
-    let mut map1 = Map1::new().await;
-    
-    let p1 = Chicken::new(640.0, 480.0, true).await;
-    let p2 = Chicken::new(340.0, 480.0, true).await;
+    let mut map = Map1::new().await;
+
+    let playerspawn = map.spawn();
+    let mut p1 = Chicken::new(playerspawn[0].x, playerspawn[0].y, "p1".to_string()).await;
+    let mut p2 = Chicken::new(playerspawn[1].x, playerspawn[1].y, "p2".to_string()).await;
 
     loop {
-        clear_background(BEIGE);
-        map1.draw();
+        map.draw();
         draw_grid(50.0, BLACK);
+
+        p1.automove().await;
+        p2.automove().await;
         p1.draw();
         p2.draw();
+
         next_frame().await
     }
 }
