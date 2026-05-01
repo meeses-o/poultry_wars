@@ -159,8 +159,7 @@ use serde::{Deserialize, Serialize};
 fn is_zero(num: &i32) -> bool {
     *num == 0
 }
-// Please replace the libsql:// from the URL with https:
-pub const TURSO_URL: &str = "libsql://poultrywars-butterbae247.aws-us-east-2.turso.io";
+pub const TURSO_URL: &str = "https://poultrywars-butterbae247.aws-us-east-2.turso.io";
 pub const TURSO_AUTH_TOKEN: &str = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzczODE1NTEsImlkIjoiMDE5ZGJhYzQtYzQwMS03ZTE4LWE3MjUtYWI5MThlYTA1NDcyIiwicmlkIjoiNGFlYjY1NDItYTNhOC00YzhhLTkzMWItYmE0Njg1Zjg5MTAxIn0.bU0oOK4_UDn5ccbgQRjtPRo_oJq2-OcyqukzI0jNqtficJXduuKZu1YUjVFcrQpNIA52tL3AU5c_SGMEdeOqCQ";
 
 // ============================================================================

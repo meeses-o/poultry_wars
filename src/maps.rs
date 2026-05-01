@@ -2,4 +2,4 @@
 //Apr 24th 2026
 //Mod file for maps
 
-pub mod map1;
+pub mod map;

@@ -14,6 +14,9 @@ pub async fn run() -> String{
         if btn_exit.click() {
             return "exit".to_string();
         }
+        if is_key_down(KeyCode:: Enter){
+            return "login".to_string()
+        }
         if is_key_down(KeyCode::Backspace){
             return "game".to_string();
         }
