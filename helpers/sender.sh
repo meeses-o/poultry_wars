@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#CIP is 172.22.14.32
 # Check if arguments are provided
 if [ $# -lt 2 ]; then
     echo "Usage: $0 <receiver_ip> <message>"

@@ -37,6 +37,7 @@ async fn main() {
                 "screen1" => screens::screen1::run().await,
                 "game" => screens::game::run().await,
                 "login" => screens::login::run().await,
+                // "guide" => screens::guide::run().await,
                 _ => break,
             };
             last_switch = get_time();

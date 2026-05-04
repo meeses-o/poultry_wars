@@ -8,7 +8,7 @@ In your mod.rs file located in the modules folder add the following to the end o
     pub mod text_button;
 
 Then with the other use commands add:
-use crate::modules::text_button::TextButton;
+use crate::ui::text_button::TextButton;
 
 Then add the following to the top of your file:
 

@@ -8,7 +8,6 @@ use crate::ui::still_image::StillImage;
 use crate::classes::chicken::Chicken;
 
 pub struct Map {
-    // map1: Vec2,
     mplatform1: StillImage, 
     mplatform2: StillImage,
     platform: StillImage,
@@ -20,7 +19,6 @@ pub struct Map {
 impl Map {
     pub async fn new() -> Self {
         Map {
-            // map1 = ()
             mplatform1: StillImage::new("assets/maps/map_1/miniplatform.png", 250.0, 100.0, 120.0, 400.0, true, 1.0 ).await,
             mplatform2: StillImage::new("assets/maps/map_1/miniplatform.png", 250.0, 100.0, 1000.0, 500.0, true, 1.0).await,
             platform: StillImage::new("assets/maps/map_1/platform.png", 450.0, 285.0, 450.0, 380.0, true, 1.0).await,
