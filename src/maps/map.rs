@@ -5,7 +5,6 @@ Description: This is Map1 module with its functions
  */
 use macroquad::prelude::*;
 use crate::ui::still_image::StillImage;
-use crate::classes::chicken::Chicken;
 
 pub struct Map {
     mplatform1: StillImage, 
@@ -31,15 +30,22 @@ impl Map {
     pub fn spawn(&mut self) -> Vec<Vec2>{
         return vec![self.spawn_p1, self.spawn_p2];
     }
+
     #[allow(dead_code)] 
     fn tick(&mut self) {
-        
+        {}
     }
+
     #[allow(dead_code)]
     pub fn draw(&mut self) {
         self.background.draw();
         self.mplatform1.draw();
         self.mplatform2.draw();
         self.platform.draw();
+    }
+
+    #[allow(dead_code)]
+    pub fn pass_floors(&self) -> Vec<&StillImage> {
+        vec![&self.mplatform1, &self.mplatform2, &self.platform]
     }
 }

@@ -4,7 +4,7 @@
 
 use macroquad::prelude::*;
 use serde::Deserialize;
-use crate::databasing::database::{create_database_client, DatabaseTable};
+use crate::utils::database::{create_database_client, DatabaseTable};
 use crate::ui::text_button::TextButton;
 use crate::ui::text_input::TextInput;
 use crate::ui::label::Label;

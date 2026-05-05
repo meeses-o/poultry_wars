@@ -84,10 +84,31 @@ impl Chicken {
         self.accell.y -= 2.0;
     }
 
-    pub fn floor_at(&mut self, floorlevel: f32) {
-        if self.view.get_y() > floorlevel {
-            self.view.set_y(floorlevel);
-            self.jump_posib = true;
+    pub fn check_floor_at(&mut self, floordims: Vec<Vec2>) {
+        //This function works that floordims[0] is the pos
+        //and [1] is the size. for 0, x = x and y=y.
+        //for 1, x=width and y=height. don't use the actual
+        //collision module rather coordinates. 
+
+        //Player dims
+        let play_top = self.view.get_y();
+        let play_bottom = self.view.get_y()+self.view.size().y;
+        let play_left = self.view.get_x();
+        let play_right = self.view.get_x()+self.view.size().x;
+
+        //Plat dims
+        let plat_top = floordims[0].y;
+        let plat_bottom = floordims[0].y+floordims[1].y;
+        let plat_left = floordims[0].x;
+        let plat_right = floordims[0].x+floordims[1].x;
+        let plat_mid_y = floordims[0].y+(floordims[1].y/2.0);
+        let plat_mid_x = floordims[0].x+(floordims[1].x/2.0);
+
+        //top/bottom of the platform
+        if play_bottom > plat_top && play_bottom < plat_mid_y && play_left < plat_right && play_right > plat_left {
+            self.view.set_y(plat_top-self.view.size().y);
+        } else if play_left < plat_right && play_right > plat_left && play_top < plat_bottom && play_top > plat_mid_y {
+            self.view.set_y(plat_bottom);
         }
     }
 
@@ -104,6 +125,11 @@ impl Chicken {
         }
 
         self.framemove();
+    }
+
+    pub async fn hurt(&mut self) {
+        self.health -= 1;
+        self.health_bar.set_image(&format!("assets/health/{}/health{}.png", self.player, self.health)).await;
     }
 }
 
