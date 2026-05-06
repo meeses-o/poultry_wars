@@ -18,11 +18,11 @@ pub struct Map {
 impl Map {
     pub async fn new() -> Self {
         Map {
-            mplatform1: StillImage::new("assets/maps/map_1/miniplatform.png", 250.0, 100.0, 120.0, 400.0, true, 1.0 ).await,
-            mplatform2: StillImage::new("assets/maps/map_1/miniplatform.png", 250.0, 100.0, 1000.0, 500.0, true, 1.0).await,
-            platform: StillImage::new("assets/maps/map_1/platform.png", 450.0, 285.0, 450.0, 380.0, true, 1.0).await,
+            mplatform1: StillImage::new("assets/maps/map_1/miniplatform.png", 250.0, 60.0, 120.0, 400.0, true, 1.0 ).await,
+            mplatform2: StillImage::new("assets/maps/map_1/miniplatform.png", 250.0, 60.0, 1000.0, 500.0, true, 1.0).await,
+            platform: StillImage::new("assets/maps/map_1/platform.png", 400.0, 60.0, 500.0, 380.0, true, 1.0).await,
             background: StillImage::new("assets/maps/map_1/background.png", 1280.0, 960.0, 0.0, 0.0, true, 1.0).await,
-            spawn_p1: vec2(140.0, 400.0),
+            spawn_p1: vec2(160.0, 300.0),
             spawn_p2: vec2(1120.0, 500.0),
         }
     }
@@ -32,7 +32,7 @@ impl Map {
     }
 
     #[allow(dead_code)] 
-    fn tick(&mut self) {
+    pub fn tick(&mut self) {
         {}
     }
 

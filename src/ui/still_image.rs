@@ -179,6 +179,9 @@ impl StillImage {
     pub fn texture_size(&self) -> Vec2 {
         vec2(self.texture.width(), self.texture.height())
     }
+    pub fn generate_floordims(&self) -> Vec<Vec2> {
+        vec![vec2(self.x, self.y), vec2(self.width, self.height)]
+    }
     #[allow(unused)]
     pub fn set_position(&mut self, pos: Vec2) {
         self.x = pos[0];
