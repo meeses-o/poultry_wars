@@ -1,7 +1,7 @@
 //Created by Oliver
 //Apr 24th 2026
 
-use macroquad::prelude::*;
+use macroquad::{experimental::collections::storage::get, prelude::*};
 use crate::ui::still_image::StillImage;
 
 pub struct Chicken{
@@ -9,30 +9,54 @@ pub struct Chicken{
     health: i32,
     stocks: usize,
     health_bar: StillImage,
+    stock_counter: StillImage,
     player: String,
     speed: Vec2,                //current speeds in the x and y
     accell: Vec2,               //Current accellerations in the x and y
     jump_posib: bool,
-    start_pos: Vec2
+    start_pos: Vec2,
+    attack: bool,
+    last_attack_time: f64,
 }
 impl Chicken {
     pub async fn new(x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
-        Chicken {
-            view: StillImage::new(&format!("assets/class_images/chicken/{}/idle_r.png", player), 50.0, 100.0, x, y, true, 1.0).await,
-            health: 10,
-            stocks: 3,
-            health_bar: StillImage::new(&format!("assets/health/{}/health10.png", player), 320.0, 150.0, 650.0, 20.0, true, 1.0).await,
-            player: player,
-            speed: vec2(0.0,0.0),
-            accell: vec2(0.0,0.125),
-            jump_posib: true,
-            start_pos: start_pos
+        if player == "p1".to_string() {
+            Chicken {
+                view: StillImage::new(&format!("assets/class_images/chicken/{}/idle_r.png", player), 50.0, 100.0, x, y, true, 1.0).await,
+                health: 10,
+                stocks: 3,
+                health_bar: StillImage::new(&format!("assets/health/{}/health10.png", player), 320.0, 200.0, 650.0, -38.0, true, 1.0).await,
+                stock_counter: StillImage::new("assets/health/stocks/3.png", 100.0, 100.0, 650.0, 50.0, true, 1.0).await,
+                player: player,
+                speed: vec2(0.0,0.0),
+                accell: vec2(0.0,0.125),
+                jump_posib: true,
+                start_pos: start_pos,
+                attack: false,
+                last_attack_time: -0.5,
+            }  
+        } else {
+            Chicken {
+                view: StillImage::new(&format!("assets/class_images/chicken/{}/idle_r.png", player), 50.0, 100.0, x, y, true, 1.0).await,
+                health: 10,
+                stocks: 3,
+                health_bar: StillImage::new(&format!("assets/health/{}/health10.png", player), 320.0, 200.0, 320.0, -34.0, true, 1.0).await,
+                stock_counter: StillImage::new("assets/health/stocks/3.png", 100.0, 100.0, 320.0, 50.0, true, 1.0).await,
+                player: player,
+                speed: vec2(0.0,0.0),
+                accell: vec2(0.0,0.125),
+                jump_posib: true,
+                start_pos: start_pos,
+                attack: false,
+                last_attack_time: -0.5,
+            }
         }
     }
 
     pub fn draw(&self) {
-        self.view.draw();
         self.health_bar.draw();
+        self.stock_counter.draw();
+        self.view.draw();
     }
 
     pub fn framemove(&mut self) {
@@ -70,17 +94,33 @@ impl Chicken {
 
     async fn move_left(&mut self) {
         self.speed.x -= 0.6;
-        self.view.set_image(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).await
+        if !self.attack {
+            self.view.set_image(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).await;
+        } else {
+            self.view.set_image(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).await;
+        }
     }
 
     async fn move_right(&mut self) {
         self.speed.x += 0.6;
-        self.view.set_image(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).await
+        if !self.attack {
+            self.view.set_image(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).await;
+        } else {
+            self.view.set_image(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).await;
+        }
     }
 
     fn jump(&mut self) {
-        self.speed.y -= 12.0;
+        self.speed.y = -7.0;
         self.jump_posib = false;
+    }
+
+    async fn attack(&mut self) {
+        let time = get_time();
+        if time - self.last_attack_time > 0.5 {
+            self.attack = true;
+            self.last_attack_time = time;
+        }
     }
 
     //for testing; zero gravity
@@ -88,24 +128,20 @@ impl Chicken {
         self.accell.y -= 2.0;
     }
 
-    pub async fn hurt(&mut self) {
-        self.health -= 1;
-        self.health_bar.set_image(&format!("assets/health/{}/health{}.png", self.player, self.health)).await;
-    }
-
-    pub async fn respawn(&mut self) {
+    pub fn reset_pos(&mut self) {
         self.view.set_position(self.start_pos);
-        self.hurt().await;
     }
 
-    pub async fn check_stock_dead(&mut self) {
-        if self.health < 1 {
-            if self.stocks > 0 {
-                self.stocks -= 1;
-                self.health = 10;
-                self.respawn().await;
-            }
+    pub async fn allpurpose_hurt(&mut self) {
+        if self.health < 1 && self.stocks > 0 {
+            self.stocks -= 1;
+            self.health = 10;
+            self.view.set_position(self.start_pos);
+        } else {
+            self.health -= 1;
         }
+        self.health_bar.set_image(&format!("assets/health/{}/health{}.png", self.player, self.health)).await;
+        self.stock_counter.set_image(&format!("assets/health/stocks/{}.png", self.stocks)).await;
     }
 
     pub fn check_full_dead(&self) -> bool {
@@ -131,17 +167,20 @@ impl Chicken {
         //Plat dims
         let plat_top = floordims[0].y;
         let plat_bottom = floordims[0].y+floordims[1].y;
-        let plat_left = floordims[0].x-5.0;
-        let plat_right = floordims[0].x+floordims[1].x+5.0;
+        let plat_left = floordims[0].x;
+        let plat_right = floordims[0].x+floordims[1].x;
         let plat_mid_y = floordims[0].y+(floordims[1].y/2.0);
         let plat_mid_x = floordims[0].x+(floordims[1].x/2.0);
+
+        let mut temp_jump_possib = false;
 
         //top/bottom of the platform
         if play_bottom > plat_top && play_bottom < plat_mid_y && play_left < plat_right && play_right > plat_left { //top
             self.view.set_y(plat_top-self.view.size().y);
-            self.jump_posib = true;
+            temp_jump_possib = true;
         } else if play_left < plat_right && play_right > plat_left && play_top < plat_bottom && play_top > plat_mid_y { //bott
             self.view.set_y(plat_bottom);
+            temp_jump_possib = false;
         }
 
         play_top = self.view.get_y();
@@ -150,28 +189,65 @@ impl Chicken {
         //left/right of the platform
         if play_bottom > plat_top && play_top < plat_bottom && play_left < plat_right && play_left > plat_mid_x { //right
             self.view.set_x(plat_right);
+            temp_jump_possib = false;
         } else if play_bottom > plat_top && play_top < plat_bottom && play_right > plat_left && play_right < plat_mid_x { //left
             self.view.set_x(plat_left-self.view.size().x);
+            temp_jump_possib = false;
         }
 
         if play_bottom > 960.0 {
-            self.respawn().await;
+            self.reset_pos();
+            self.allpurpose_hurt().await;
+        }
+
+        if temp_jump_possib {
+            self.jump_posib = true;
         }
     }
 
     pub async fn automove(&mut self) {
-        if is_key_down(KeyCode::W) && self.jump_posib{
-            self.jump()
-        }
-        if is_key_down(KeyCode::A) {
-            self.move_left().await;
-        }
+        if self.player == "p1".to_string() {
+            if is_key_down(KeyCode::W) && self.jump_posib{
+                self.jump()
+            }
+            if is_key_down(KeyCode::A) {
+                self.move_left().await;
+            }
 
-        if is_key_down(KeyCode::D) {
-            self.move_right().await;
+            if is_key_down(KeyCode::D) {
+                self.move_right().await;
+            }
+
+            if is_key_down(KeyCode::Space) {
+                self.attack().await;
+            }
+
+        } else {
+            if is_key_down(KeyCode::Up) && self.jump_posib{
+                self.jump()
+            }
+            if is_key_down(KeyCode::Left) {
+                self.move_left().await;
+            }
+
+            if is_key_down(KeyCode::Right) {
+                self.move_right().await;
+            }
+
+            if is_key_down(KeyCode::M) {
+                self.attack().await;
+            }
+        }
+        
+        if get_time() - self.last_attack_time > 0.5 {
+            self.attack = false;
         }
 
         self.framemove();
+    }
+
+    pub fn get_attack_state(&self) -> bool {
+        self.attack
     }
 }
 

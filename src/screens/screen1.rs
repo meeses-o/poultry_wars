@@ -20,6 +20,9 @@ pub async fn run() -> String{
         if is_key_down(KeyCode::Backspace){
             return "game".to_string();
         }
+        if is_key_down(KeyCode::Space){
+            return "guide".to_string();
+        }
         next_frame().await
     }
 }

@@ -22,8 +22,8 @@ impl Map {
             mplatform2: StillImage::new("assets/maps/map_1/miniplatform.png", 250.0, 60.0, 1000.0, 500.0, true, 1.0).await,
             platform: StillImage::new("assets/maps/map_1/platform.png", 400.0, 60.0, 500.0, 380.0, true, 1.0).await,
             background: StillImage::new("assets/maps/map_1/background.png", 1280.0, 960.0, 0.0, 0.0, true, 1.0).await,
-            spawn_p1: vec2(160.0, 300.0),
-            spawn_p2: vec2(1120.0, 500.0),
+            spawn_p2: vec2(160.0, 300.0),
+            spawn_p1: vec2(1120.0, 400.0),
         }
     }
     #[allow(dead_code)]
