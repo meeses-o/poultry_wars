@@ -12,6 +12,7 @@ mod utils;
 
 use macroquad::prelude::*;
 
+
 /// Set up window settings before the app runs
 fn window_conf() -> Conf {
     Conf {
@@ -30,7 +31,6 @@ fn window_conf() -> Conf {
 async fn main() {
     let mut current_screen = "screen1".to_string();
     let mut last_switch = get_time() - 0.02;
-
     loop {
         if get_time() - last_switch > 0.01 {
             current_screen = match current_screen.as_str() {

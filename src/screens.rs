@@ -6,3 +6,4 @@ pub mod screen1;
 pub mod game;
 pub mod login;
 pub mod guide;
+pub mod win;

@@ -17,6 +17,8 @@ pub struct Chicken{
     start_pos: Vec2,
     attack: bool,
     last_attack_time: f64,
+    side: bool,                 //left = false, right = true
+    attack_clock: bool,
 }
 impl Chicken {
     pub async fn new(x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
@@ -34,6 +36,8 @@ impl Chicken {
                 start_pos: start_pos,
                 attack: false,
                 last_attack_time: -0.5,
+                side: false,
+                attack_clock: false,
             }  
         } else {
             Chicken {
@@ -49,6 +53,8 @@ impl Chicken {
                 start_pos: start_pos,
                 attack: false,
                 last_attack_time: -0.5,
+                side: true,
+                attack_clock: false,
             }
         }
     }
@@ -57,6 +63,10 @@ impl Chicken {
         self.health_bar.draw();
         self.stock_counter.draw();
         self.view.draw();
+    }
+
+    pub fn get_view(&self) -> &StillImage {
+        &self.view
     }
 
     pub fn framemove(&mut self) {
@@ -94,6 +104,7 @@ impl Chicken {
 
     async fn move_left(&mut self) {
         self.speed.x -= 0.6;
+        self.side = false;
         if !self.attack {
             self.view.set_image(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).await;
         } else {
@@ -103,6 +114,7 @@ impl Chicken {
 
     async fn move_right(&mut self) {
         self.speed.x += 0.6;
+        self.side = true;
         if !self.attack {
             self.view.set_image(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).await;
         } else {
@@ -119,7 +131,24 @@ impl Chicken {
         let time = get_time();
         if time - self.last_attack_time > 0.5 {
             self.attack = true;
+            self.attack_clock = true;
             self.last_attack_time = time;
+        }
+    }
+
+    async fn idle(&mut self) {
+        if self.side {
+            if !self.attack {
+                self.view.set_image(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).await;
+            } else {
+                self.view.set_image(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).await;
+            }
+        } else {
+            if !self.attack {
+                self.view.set_image(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).await;
+            } else {
+                self.view.set_image(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).await;
+            }
         }
     }
 
@@ -206,36 +235,61 @@ impl Chicken {
     }
 
     pub async fn automove(&mut self) {
+        if self.attack_clock {
+            self.attack_clock = false;
+            
+        }
+
         if self.player == "p1".to_string() {
+            let mut keypress = false;
+
             if is_key_down(KeyCode::W) && self.jump_posib{
-                self.jump()
+                self.jump();
+                keypress = true;
             }
             if is_key_down(KeyCode::A) {
                 self.move_left().await;
+                keypress = true;
             }
 
             if is_key_down(KeyCode::D) {
                 self.move_right().await;
+                keypress = true;
             }
 
             if is_key_down(KeyCode::Space) {
                 self.attack().await;
+                keypress = true;
+            }
+
+            if !keypress {
+                self.idle().await;
             }
 
         } else {
+            let mut keypress = false;
+
             if is_key_down(KeyCode::Up) && self.jump_posib{
-                self.jump()
+                self.jump();
+                keypress = true;
             }
             if is_key_down(KeyCode::Left) {
                 self.move_left().await;
+                keypress = true;
             }
 
             if is_key_down(KeyCode::Right) {
                 self.move_right().await;
+                keypress = true;
             }
 
             if is_key_down(KeyCode::M) {
                 self.attack().await;
+                keypress = true;
+            }
+
+            if !keypress {
+                self.idle().await;
             }
         }
         
@@ -247,7 +301,7 @@ impl Chicken {
     }
 
     pub fn get_attack_state(&self) -> bool {
-        self.attack
+        self.attack_clock
     }
 }
 

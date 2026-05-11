@@ -10,10 +10,17 @@ use crate::ui::text_input::TextInput;
 use crate::ui::label::Label;
 
 #[derive(Debug, Deserialize)]
-struct LoginRecord {
+pub struct LoginRecord {
     username: String,
     password: String,
+    rank: String,
+    money: String
 }
+impl LoginRecord {
+    fn new(username: String, password: String, rank: String, money: String) -> Self {
+        LoginRecord { username: username, password: password, rank: rank, money: money }
+    }
+ }
 
 pub async fn run() -> String{
     let client = create_database_client();
@@ -96,28 +103,42 @@ pub async fn run() -> String{
                 lbl_message.set_text("Please enter both a username and password.".to_string());
                 println!("Please enter both a username and password.");
             } else {
-                let sql = "SELECT username, password FROM poultrywars ORDER BY id";
-                match client.fetch_with_sql::<LoginRecord>(sql).await {
-                    Ok(records) => {
-                        let login_successful = records.iter().any(|record| record.username == username && record.password == password);
-                        if login_successful {
-                            lbl_message.set_text("Login successful!".to_string());
-                            println!("Login successful!");
-                        } else {
-                            lbl_message.set_text("Invalid username or password.".to_string());
-                            println!("Invalid username or password.");
+            //     let sql = "SELECT username, password FROM poultrywars ORDER BY id";
+            //     match client.fetch_with_sql::<LoginRecord>(sql).await {
+            //         Ok(records) => {
+            //             let login_successful = records.iter().any(|record| record.username == username && record.password == password);
+            //             if login_successful {
+            //                 lbl_message.set_text("Login successful!".to_string());
+            //                 println!("Login successful!");
+            //             } else {
+            //                 lbl_message.set_text("Invalid username or password.".to_string());
+            //                 println!("Invalid username or password.");
+            //             }
+            //         }
+            //         Err(err) => {
+            //             lbl_message.set_text(format!("Failed to load login records: {}", err));
+            //             println!("Failed to load login records: {}", err);
+            //         }
+            //     }
+                let mut loginfo = 
+                //result<vec<database>>
+                let records_err = client.fetch_table("poultry_wars").await;
+                if let Ok(records) = records_err {
+                    for player in &records {
+                        if player.username == username && player.password == password {
+
                         }
+                    } else {
+                        println!("MAKE A LBL TO SHOW THIS GENIUS. USER OR PASSWORD DNE")
                     }
-                    Err(err) => {
-                        lbl_message.set_text(format!("Failed to load login records: {}", err));
-                        println!("Failed to load login records: {}", err);
-                    }
+                } else if let Err(e) = records_err {
+                    println!("FATAL: FETCH ERR: {}", e)
                 }
             }
         }
-        // fn pass_info(){
+        fn credentials(){
             
-        // }
+        }
         next_frame().await
     }
 }

@@ -6,7 +6,8 @@ Description: This is the map 1 screen
 use macroquad::prelude::*;
 use crate::ui::grid::{ draw_grid };
 use crate::classes::chicken::Chicken;
-use crate::maps::map_1::Map;
+use crate::utils::collision::check_collision;
+use crate::maps::map_2::Map;
 
 
 pub async fn run() -> String {
@@ -29,7 +30,16 @@ pub async fn run() -> String {
         }
 
         //attacks
-        
+        if p1.get_attack_state() {
+            if check_collision(p1.get_view(), p2.get_view(), 5) {
+                p2.allpurpose_hurt().await;
+            }
+        }
+        if p2.get_attack_state() {
+            if check_collision(p1.get_view(), p2.get_view(), 5) {
+                p1.allpurpose_hurt().await;
+            }
+        }
 
 
         //draws
