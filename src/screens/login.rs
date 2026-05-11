@@ -2,6 +2,8 @@
 // April 28th, 2026
 // This file contains the code for the login screen
 
+use core::panic::PanicMessage;
+
 use macroquad::prelude::*;
 use serde::Deserialize;
 use crate::utils::database::{create_database_client, DatabaseTable};
@@ -49,6 +51,7 @@ pub async fn run() -> String{
     let usernamelabel = Label::new("Username:", 50.0, 30.0, 24);
     let passwordlabel = Label::new("Password:", 50.0, 130.0, 24);
     let mut lbl_message = Label::new("", 50.0, 220.0, 24);
+    let mut ret_player_data: Vec<LoginRecord> = vec![];
 
     let create_table_sql = "CREATE TABLE IF NOT EXISTS poultrywars (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, rank TEXT NOT NULL, money TEXT NOT NULL)";
     if let Err(err) = client.execute_sql(create_table_sql).await {
@@ -103,40 +106,36 @@ pub async fn run() -> String{
                 lbl_message.set_text("Please enter both a username and password.".to_string());
                 println!("Please enter both a username and password.");
             } else {
-            //     let sql = "SELECT username, password FROM poultrywars ORDER BY id";
-            //     match client.fetch_with_sql::<LoginRecord>(sql).await {
-            //         Ok(records) => {
-            //             let login_successful = records.iter().any(|record| record.username == username && record.password == password);
-            //             if login_successful {
-            //                 lbl_message.set_text("Login successful!".to_string());
-            //                 println!("Login successful!");
-            //             } else {
-            //                 lbl_message.set_text("Invalid username or password.".to_string());
-            //                 println!("Invalid username or password.");
-            //             }
-            //         }
-            //         Err(err) => {
-            //             lbl_message.set_text(format!("Failed to load login records: {}", err));
-            //             println!("Failed to load login records: {}", err);
-            //         }
-            //     }
-                let mut loginfo = 
-                //result<vec<database>>
+                let mut local_player_info = LoginRecord::new("unchanged".to_string(), "".to_string(), "".to_string(), "".to_string());
                 let records_err = client.fetch_table("poultry_wars").await;
                 if let Ok(records) = records_err {
                     for player in &records {
                         if player.username == username && player.password == password {
-
+                            local_player_info.username = player.username.clone();
+                            local_player_info.password = player.password.clone();
+                            local_player_info.rank = player.rank.clone();
+                            local_player_info.money = player.money.clone();
+                            break
+                        }
+                    }
+                    if local_player_info.username == "unchanged".to_string() {
+                        println!("User or pass DNE")
+                    } else if ret_player_data.len() > 0 {
+                        if ret_player_data[0].username == local_player_info.username && ret_player_data[0].password == local_player_info.password {
+                            println!("User already playing")
+                        } else {
+                            ret_player_data.push(local_player_info);
                         }
                     } else {
-                        println!("MAKE A LBL TO SHOW THIS GENIUS. USER OR PASSWORD DNE")
+                        ret_player_data.push(local_player_info);
                     }
                 } else if let Err(e) = records_err {
                     println!("FATAL: FETCH ERR: {}", e)
                 }
             }
         }
-        fn credentials(){
+
+        if ret_player_data.len() > 1 {
             
         }
         next_frame().await

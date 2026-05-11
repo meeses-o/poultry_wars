@@ -7,7 +7,7 @@ use macroquad::prelude::*;
 use crate::ui::grid::{ draw_grid };
 use crate::classes::chicken::Chicken;
 use crate::utils::collision::check_collision;
-use crate::maps::map_2::Map;
+use crate::maps::map_1::Map;
 
 
 pub async fn run() -> String {
