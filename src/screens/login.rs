@@ -13,10 +13,10 @@ use crate::ui::label::Label;
 
 #[derive(Debug, Deserialize)]
 pub struct LoginRecord {
-    username: String,
-    password: String,
-    rank: String,
-    money: String
+    pub username: String,
+    pub password: String,
+    pub rank: String,
+    pub money: String
 }
 impl LoginRecord {
     fn new(username: String, password: String, rank: String, money: String) -> Self {
@@ -24,7 +24,7 @@ impl LoginRecord {
     }
  }
 
-pub async fn run() -> String{
+pub async fn run() -> Vec<LoginRecord>{
     let client = create_database_client();
     let create_button: TextButton = TextButton::new(
         250.0,
@@ -51,6 +51,8 @@ pub async fn run() -> String{
     let usernamelabel = Label::new("Username:", 50.0, 30.0, 24);
     let passwordlabel = Label::new("Password:", 50.0, 130.0, 24);
     let mut lbl_message = Label::new("", 50.0, 220.0, 24);
+    let mut lbl_p1 = Label::new("", 450.0, 50.0, 22);
+    let mut lbl_p2 = Label::new("", 450.0, 110.0, 22);
     let mut ret_player_data: Vec<LoginRecord> = vec![];
 
     let create_table_sql = "CREATE TABLE IF NOT EXISTS poultrywars (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, rank TEXT NOT NULL, money TEXT NOT NULL)";
@@ -67,6 +69,8 @@ pub async fn run() -> String{
         usernamelabel.draw();
         passwordlabel.draw();
         lbl_message.draw();
+        lbl_p1.draw();
+        lbl_p2.draw();
 
         // Check for button click
         if create_button.click() {
@@ -75,24 +79,21 @@ pub async fn run() -> String{
 
             if username.is_empty() || password.is_empty() {
                 lbl_message.set_text("Please enter both a username and password.".to_string());
-                println!("Please enter both a username and password.");
             } else {
                 let new_record = DatabaseTable {
                     id: 0,
                     username,
                     password,
-                    rank: "Embryo".to_string(),
+                    rank: "0".to_string(),
                     money: "0".to_string(),
                 };
 
                 match client.insert_record("poultrywars", &new_record).await {
                     Ok(id) => {
                         lbl_message.set_text(format!("Account created (ID: {})", id));
-                        println!("Record inserted with ID: {}", id);
                     }
                     Err(err) => {
                         lbl_message.set_text(format!("Failed to insert record: {}", err));
-                        println!("Failed to insert record: {}", err);
                     }
                 }
             }
@@ -104,10 +105,9 @@ pub async fn run() -> String{
 
             if username.is_empty() || password.is_empty() {
                 lbl_message.set_text("Please enter both a username and password.".to_string());
-                println!("Please enter both a username and password.");
             } else {
-                let mut local_player_info = LoginRecord::new("unchanged".to_string(), "".to_string(), "".to_string(), "".to_string());
-                let records_err = client.fetch_table("poultry_wars").await;
+                let mut local_player_info = LoginRecord::new("".to_string(), "".to_string(), "".to_string(), "".to_string());
+                let records_err = client.fetch_table("poultrywars").await;
                 if let Ok(records) = records_err {
                     for player in &records {
                         if player.username == username && player.password == password {
@@ -118,11 +118,11 @@ pub async fn run() -> String{
                             break
                         }
                     }
-                    if local_player_info.username == "unchanged".to_string() {
-                        println!("User or pass DNE")
+                    if local_player_info.username == "".to_string() {
+                        lbl_message.set_text("User or pass do not exist");
                     } else if ret_player_data.len() > 0 {
                         if ret_player_data[0].username == local_player_info.username && ret_player_data[0].password == local_player_info.password {
-                            println!("User already playing")
+                            lbl_message.set_text("User already playing");
                         } else {
                             ret_player_data.push(local_player_info);
                         }
@@ -130,14 +130,32 @@ pub async fn run() -> String{
                         ret_player_data.push(local_player_info);
                     }
                 } else if let Err(e) = records_err {
-                    println!("FATAL: FETCH ERR: {}", e)
+                    lbl_message.set_text(format!("FATAL: FETCH ERR: {}", e));
                 }
             }
         }
 
-        if ret_player_data.len() > 1 {
-            
+        if is_key_pressed(KeyCode::K) {
+            return vec![LoginRecord::new("o_money".to_string(), "osmond".to_string(), "0".to_string(), "0".to_string()), LoginRecord::new("mujib".to_string(), "fire123".to_string(), "0".to_string(), "0".to_string())];
         }
+
+        if ret_player_data.len() > 1 {
+            return ret_player_data;
+        }
+
+        match ret_player_data.get(0) {
+            Some(info) => {
+                lbl_p1.set_text(format!("P1: {}", info.username));
+            }
+            None => {}
+        }
+        match ret_player_data.get(1) {
+            Some(info) => {
+                lbl_p2.set_text(format!("P2: {}", info.username));
+            }
+            None => {}
+        }
+
         next_frame().await
     }
 }

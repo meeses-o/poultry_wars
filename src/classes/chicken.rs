@@ -162,22 +162,24 @@ impl Chicken {
     }
 
     pub async fn allpurpose_hurt(&mut self) {
-        if self.health < 1 && self.stocks > 0 {
+        if self.health < 1 && self.stocks > 1 {
             self.stocks -= 1;
             self.health = 10;
             self.view.set_position(self.start_pos);
-        } else {
+        } else if self.health > 1 {
             self.health -= 1;
+        } else {
+            self.health = 0;
         }
         self.health_bar.set_image(&format!("assets/health/{}/health{}.png", self.player, self.health)).await;
         self.stock_counter.set_image(&format!("assets/health/stocks/{}.png", self.stocks)).await;
     }
 
     pub fn check_full_dead(&self) -> bool {
-        if self.stocks > 0 {
-            return false;
-        } else {
+        if self.health == 0 && self.stocks == 1 {
             return true;
+        } else {
+            return false;
         }
     }
 

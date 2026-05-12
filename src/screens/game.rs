@@ -4,18 +4,30 @@ Date: 04/24/2026
 Description: This is the map 1 screen
  */
 use macroquad::prelude::*;
+use ureq::rustls::crypto::hmac::Key;
 use crate::ui::grid::{ draw_grid };
 use crate::classes::chicken::Chicken;
 use crate::utils::collision::check_collision;
 use crate::maps::map_1::Map;
 
 
-pub async fn run() -> String {
+pub async fn run() -> bool {
     let mut map = Map::new().await;
     let playerspawn = map.spawn();
     let mut p1 = Chicken::new(playerspawn[0].x, playerspawn[0].y, "p1".to_string(), playerspawn[0]).await;
     let mut p2 = Chicken::new(playerspawn[1].x, playerspawn[1].y, "p2".to_string(), playerspawn[1]).await;
     loop {
+        //winchecking
+        if p2.check_full_dead() {
+            return true;
+        } else if p1.check_full_dead() {
+            return false;
+        }
+
+        if is_key_pressed(KeyCode::K) {
+            p1.allpurpose_hurt().await;
+        }
+
         clear_background(BEIGE);
         draw_grid(50.0, BLACK);
         map.tick();
@@ -46,13 +58,6 @@ pub async fn run() -> String {
         map.draw();
         p1.draw();
         p2.draw();
-
-        //winchecking
-        if p2.check_full_dead() {
-            return "p1_win".to_string();
-        } else if p1.check_full_dead() {
-            return "p2_win".to_string();
-        }
 
         next_frame().await;
     }
