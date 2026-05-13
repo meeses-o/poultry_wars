@@ -3,3 +3,4 @@
 //Mod file for classes
 
 pub mod chicken;
+pub mod turkey;

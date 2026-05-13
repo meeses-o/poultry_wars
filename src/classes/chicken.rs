@@ -316,6 +316,10 @@ impl Chicken {
     pub fn get_attack_state(&self) -> bool {
         self.attack_clock
     }
+
+    pub fn get_attack_dmg(&self) -> i32 {
+        1
+    }
 }
 
 //1280x960

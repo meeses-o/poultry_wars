@@ -34,6 +34,7 @@ fn window_conf() -> Conf {
 async fn main() {
     let tm = TextureManager::new();
     let all_assets = vec![
+        "assets/welcome_logo.png",
         "assets/class_images/chicken/p1/death.png",
         "assets/class_images/chicken/p1/attack_l.png",
         "assets/class_images/chicken/p1/attack_r.png",
@@ -75,25 +76,30 @@ async fn main() {
         "assets/maps/map_2/citymap.png",
         "assets/maps/map_2/cranebar.png",
         "assets/maps/map_2/cranechain.png",
-        "assets/maps/map_2/mapfloors.png"
+        "assets/maps/map_2/mapfloors.png",
+        "assets/rank_images/1.png",
+        "assets/rank_images/2.png",
+        "assets/rank_images/3.png",
+        "assets/rank_images/4.png",
+        "assets/rank_images/5.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 
 
     let player_info: Vec<LoginRecord> = screens::login::run().await;
     let mut last_switch = get_time() - 0.02;
-    let mut current_screen = "screen1".to_string();
+    let mut current_screen = "welcome".to_string();
     loop {
         if get_time() - last_switch > 0.01 {
             current_screen = match current_screen.as_str() {
-                "screen1" => screens::screen1::run().await,
+                "welcome" => screens::welcome::run(&tm).await,
+                "guide" => screens::guide::run().await,
                 "game" => {
-                    let _game_info = screens::selection::run(&tm).await;
-                    let winner = screens::game::run(&tm).await;
+                    let game_info = screens::selection::run(&tm).await;
+                    let winner = screens::game::run(&tm, game_info).await;
                     let retscreen = screens::win::run(&tm, &player_info[0].username, &player_info[1].username, winner).await;
                     retscreen
-                }
-                "guide" => screens::guide::run().await,
+                },
                 _ => break,
             };
             last_switch = get_time();

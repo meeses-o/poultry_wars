@@ -10,7 +10,7 @@ use crate::utils::collision::check_collision;
 use crate::maps::map_1::Map;
 use crate::utils::preload_image::TextureManager;
 
-pub async fn run(tm: &TextureManager) -> bool {
+pub async fn run(tm: &TextureManager, game_info: Vec<String>) -> bool {
     let mut map = Map::new().await;
     let playerspawn = map.spawn();
     let mut p1 = Chicken::new(tm, playerspawn[0].x, playerspawn[0].y, "p1".to_string(), playerspawn[0]).await;
@@ -25,7 +25,7 @@ pub async fn run(tm: &TextureManager) -> bool {
             return false;
         }
 
-        if is_key_pressed(KeyCode::K) {
+        if is_key_pressed(KeyCode::L) {
             p1.allpurpose_hurt(2);
         }
 
@@ -45,12 +45,12 @@ pub async fn run(tm: &TextureManager) -> bool {
         //attacks
         if p1.get_attack_state() {
             if check_collision(p1.get_view(), p2.get_view(), 5) {
-                p2.allpurpose_hurt(1);
+                p2.allpurpose_hurt(p1.get_attack_dmg());
             }
         }
         if p2.get_attack_state() {
             if check_collision(p1.get_view(), p2.get_view(), 5) {
-                p1.allpurpose_hurt(1);
+                p1.allpurpose_hurt(p2.get_attack_dmg());
             }
         }
 

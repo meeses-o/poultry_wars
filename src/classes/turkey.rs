@@ -26,7 +26,7 @@ pub struct Turkey{
 impl Turkey {
     pub async fn new(tm:&TextureManager,x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
         if player == "p1".to_string() {
-            Chicken {
+            Turkey {
                 tm: tm.clone(),
                 view: StillImage::new("", 50.0, 100.0, x, y, true, 1.0).await,
                 health: 10,
@@ -44,7 +44,7 @@ impl Turkey {
                 attack_clock: false,
             }  
         } else {
-            Chicken {
+            Turkey {
                 tm: tm.clone(),
                 view: StillImage::new("", 50.0, 100.0, x, y, true, 1.0).await,
                 health: 10,
@@ -114,7 +114,7 @@ impl Turkey {
     }
 
     fn move_left(&mut self) {
-        self.speed.x -= 0.6;
+        self.speed.x -= 0.5;
         self.side = false;
         if !self.attack {
             self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).unwrap());
@@ -124,7 +124,7 @@ impl Turkey {
     }
 
     fn move_right(&mut self) {
-        self.speed.x += 0.6;
+        self.speed.x += 0.5;
         self.side = true;
         if !self.attack {
             self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
@@ -134,13 +134,13 @@ impl Turkey {
     }
 
     fn jump(&mut self) {
-        self.speed.y = -7.0;
+        self.speed.y = -6.0;
         self.jump_posib = false;
     }
 
     fn attack(&mut self) {
         let time = get_time();
-        if time - self.last_attack_time > 0.5 {
+        if time - self.last_attack_time > 0.7 {
             self.attack = true;
             self.attack_clock = true;
             self.last_attack_time = time;
@@ -301,7 +301,7 @@ impl Turkey {
             }
         }
         
-        if get_time() - self.last_attack_time > 0.5 {
+        if get_time() - self.last_attack_time > 0.7 {
             self.attack = false;
         }
 
@@ -310,5 +310,9 @@ impl Turkey {
 
     pub fn get_attack_state(&self) -> bool {
         self.attack_clock
+    }
+
+    pub fn get_attack_dmg(&self) -> i32 {
+        2
     }
 }
