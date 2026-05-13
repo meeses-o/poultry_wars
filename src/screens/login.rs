@@ -46,6 +46,16 @@ pub async fn run() -> Vec<LoginRecord>{
         DARKBLUE,
         24,
     );
+    let guest_button: TextButton = TextButton::new(
+        450.0,
+        250.0,
+        100.0,
+        50.0,
+        "Guest",
+        BLUE,
+        DARKBLUE,
+        24,
+    );
     let mut txt_username = TextInput::new(50.0, 50.0, 300.0, 50.0, 24.0);
     let mut txt_password = TextInput::new(50.0, 150.0, 300.0, 50.0, 24.0);
     let usernamelabel = Label::new("Username:", 50.0, 30.0, 24);
@@ -132,6 +142,15 @@ pub async fn run() -> Vec<LoginRecord>{
                 } else if let Err(e) = records_err {
                     lbl_message.set_text(format!("FATAL: FETCH ERR: {}", e));
                 }
+            }
+        }
+
+        if guest_button.click() {
+            // log in as guest1 on database, rank and money will not be counted for guests, if guest1 is already logged in, log in as guest2
+            if ret_player_data.len() == 0 {
+                ret_player_data.push(LoginRecord { username: "guest1".to_string(), password: "guest".to_string(), rank: "0".to_string(), money: "0".to_string() });
+            } else if ret_player_data.len() == 1{
+                ret_player_data.push(LoginRecord { username: "guest2".to_string(), password: "guessed".to_string(), rank: "0".to_string(), money: "0".to_string() });
             }
         }
 

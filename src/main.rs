@@ -12,6 +12,8 @@ mod utils;
 
 use macroquad::prelude::*;
 use crate::screens::login::LoginRecord;
+use crate::utils::preload_image::TextureManager;
+
 
 
 /// Set up window settings before the app runs
@@ -30,6 +32,54 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
+    let tm = TextureManager::new();
+    let all_assets = vec![
+        "assets/class_images/chicken/p1/death.png",
+        "assets/class_images/chicken/p1/attack_l.png",
+        "assets/class_images/chicken/p1/attack_r.png",
+        "assets/class_images/chicken/p1/idle_r.png",
+        "assets/class_images/chicken/p1/idle_l.png",
+        "assets/class_images/chicken/p2/death.png",
+        "assets/class_images/chicken/p2/attack_r.png",
+        "assets/class_images/chicken/p2/attack_l.png",
+        "assets/class_images/chicken/p2/idle_r.png",
+        "assets/class_images/chicken/p2/idle_l.png",
+        "assets/health/p1/health0.png",
+        "assets/health/p1/health1.png",
+        "assets/health/p1/health10.png",
+        "assets/health/p1/health2.png",
+        "assets/health/p1/health3.png",
+        "assets/health/p1/health4.png",
+        "assets/health/p1/health5.png",
+        "assets/health/p1/health6.png",
+        "assets/health/p1/health7.png",
+        "assets/health/p1/health8.png",
+        "assets/health/p1/health9.png",
+        "assets/health/p2/health0.png",
+        "assets/health/p2/health1.png",
+        "assets/health/p2/health10.png",
+        "assets/health/p2/health2.png",
+        "assets/health/p2/health3.png",
+        "assets/health/p2/health4.png",
+        "assets/health/p2/health5.png",
+        "assets/health/p2/health6.png",
+        "assets/health/p2/health7.png",
+        "assets/health/p2/health8.png",
+        "assets/health/p2/health9.png",
+        "assets/health/stocks/1.png",
+        "assets/health/stocks/2.png",
+        "assets/health/stocks/3.png",
+        "assets/maps/map_1/background.png",
+        "assets/maps/map_1/miniplatform.png",
+        "assets/maps/map_1/platform.png",
+        "assets/maps/map_2/citymap.png",
+        "assets/maps/map_2/cranebar.png",
+        "assets/maps/map_2/cranechain.png",
+        "assets/maps/map_2/mapfloors.png"
+    ];
+    tm.preload_with_loading_screen(&all_assets, None).await;
+
+
     let player_info: Vec<LoginRecord> = screens::login::run().await;
     let mut last_switch = get_time() - 0.02;
     let mut current_screen = "screen1".to_string();
@@ -38,8 +88,9 @@ async fn main() {
             current_screen = match current_screen.as_str() {
                 "screen1" => screens::screen1::run().await,
                 "game" => {
-                    let winner = screens::game::run().await;
-                    let retscreen = screens::win::run(&player_info[0].username, &player_info[1].username, winner).await;
+                    let _game_info = screens::selection::run(&tm).await;
+                    let winner = screens::game::run(&tm).await;
+                    let retscreen = screens::win::run(&tm, &player_info[0].username, &player_info[1].username, winner).await;
                     retscreen
                 }
                 "guide" => screens::guide::run().await,

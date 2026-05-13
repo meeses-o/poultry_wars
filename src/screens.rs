@@ -7,3 +7,4 @@ pub mod game;
 pub mod login;
 pub mod guide;
 pub mod win;
+pub mod selection;

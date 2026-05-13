@@ -37,6 +37,16 @@ pub async fn run() -> String{
         GREEN,
         30
     );
+    let btn_selection = TextButton::new(
+        600.0,
+        200.0,
+        200.0,
+        60.0,
+        "selection",
+        BLUE,
+        GREEN,
+        30
+    );
 
 
 
@@ -55,6 +65,9 @@ pub async fn run() -> String{
         }
         if btn_guide.click() {
             return "guide".to_string();
+        }
+        if btn_selection.click() {
+            return "selection".to_string();
         }
         next_frame().await
     }

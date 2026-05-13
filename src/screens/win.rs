@@ -1,10 +1,10 @@
 use macroquad::prelude::*;
 use crate::ui::text_button::TextButton;
-use crate::ui::text_input::TextInput;
 use crate::ui::still_image::StillImage;
 use crate::ui::label::Label;
+use crate::utils::preload_image::TextureManager;
 
-pub async fn run(user1: &String, user2: &String, winner: bool) -> String {
+pub async fn run(tm: &TextureManager, user1: &String, user2: &String, winner: bool) -> String {
     let mut lbl_win_txt = String::new();
     let mut win_img_path = String::new();
     if winner {
@@ -15,7 +15,8 @@ pub async fn run(user1: &String, user2: &String, winner: bool) -> String {
         win_img_path = "assets/class_images/chicken/p2/idle_r.png".to_string();
     }
     let lbl_winner = Label::new(lbl_win_txt,100.0,200.0,25);
-    let win_img_path = StillImage::new(&win_img_path, 100.0, 100.0, 200.0, 200.0, true, 1.0).await;
+    let mut win_img = StillImage::new("", 100.0, 100.0, 200.0, 200.0, true, 1.0).await;
+    win_img.set_preload(tm.get_preload(&win_img_path).unwrap());
     let btn_menu = TextButton::new(
         100.0,
         200.0,
@@ -33,9 +34,7 @@ pub async fn run(user1: &String, user2: &String, winner: bool) -> String {
             return "guide".to_string();
         }
         lbl_winner.draw();
-        win_img_path.draw();
+        win_img.draw();
         next_frame().await
     }
 }
-
-

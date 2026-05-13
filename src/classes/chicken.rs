@@ -3,8 +3,10 @@
 
 use macroquad::{experimental::collections::storage::get, prelude::*};
 use crate::ui::still_image::StillImage;
+use crate::utils::preload_image::TextureManager;
 
 pub struct Chicken{
+    tm: TextureManager,
     view: StillImage,
     health: i32,
     stocks: usize,
@@ -21,14 +23,15 @@ pub struct Chicken{
     attack_clock: bool,
 }
 impl Chicken {
-    pub async fn new(x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
+    pub async fn new(tm:&TextureManager,x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
         if player == "p1".to_string() {
             Chicken {
-                view: StillImage::new(&format!("assets/class_images/chicken/{}/idle_r.png", player), 50.0, 100.0, x, y, true, 1.0).await,
+                tm: tm.clone(),
+                view: StillImage::new("", 50.0, 100.0, x, y, true, 1.0).await,
                 health: 10,
                 stocks: 3,
-                health_bar: StillImage::new(&format!("assets/health/{}/health10.png", player), 320.0, 200.0, 650.0, -38.0, true, 1.0).await,
-                stock_counter: StillImage::new("assets/health/stocks/3.png", 100.0, 100.0, 650.0, 50.0, true, 1.0).await,
+                health_bar: StillImage::new("", 320.0, 200.0, 650.0, -38.0, true, 1.0).await,
+                stock_counter: StillImage::new("", 100.0, 100.0, 650.0, 50.0, true, 1.0).await,
                 player: player,
                 speed: vec2(0.0,0.0),
                 accell: vec2(0.0,0.125),
@@ -41,11 +44,12 @@ impl Chicken {
             }  
         } else {
             Chicken {
-                view: StillImage::new(&format!("assets/class_images/chicken/{}/idle_r.png", player), 50.0, 100.0, x, y, true, 1.0).await,
+                tm: tm.clone(),
+                view: StillImage::new("", 50.0, 100.0, x, y, true, 1.0).await,
                 health: 10,
                 stocks: 3,
-                health_bar: StillImage::new(&format!("assets/health/{}/health10.png", player), 320.0, 200.0, 320.0, -34.0, true, 1.0).await,
-                stock_counter: StillImage::new("assets/health/stocks/3.png", 100.0, 100.0, 320.0, 50.0, true, 1.0).await,
+                health_bar: StillImage::new("", 320.0, 200.0, 320.0, -34.0, true, 1.0).await,
+                stock_counter: StillImage::new("", 100.0, 100.0, 320.0, 50.0, true, 1.0).await,
                 player: player,
                 speed: vec2(0.0,0.0),
                 accell: vec2(0.0,0.125),
@@ -57,6 +61,12 @@ impl Chicken {
                 attack_clock: false,
             }
         }
+    }
+
+    pub fn init(&mut self) {
+        self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
+        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/{}/health10.png", self.player)).unwrap());
+        self.stock_counter.set_preload(self.tm.get_preload("assets/health/stocks/3.png").unwrap());
     }
 
     pub fn draw(&self) {
@@ -102,23 +112,23 @@ impl Chicken {
         self.view.set_position(pos);
     }
 
-    async fn move_left(&mut self) {
+    fn move_left(&mut self) {
         self.speed.x -= 0.6;
         self.side = false;
         if !self.attack {
-            self.view.set_image(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).await;
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).unwrap());
         } else {
-            self.view.set_image(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).await;
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).unwrap());
         }
     }
 
-    async fn move_right(&mut self) {
+    fn move_right(&mut self) {
         self.speed.x += 0.6;
         self.side = true;
         if !self.attack {
-            self.view.set_image(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).await;
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
         } else {
-            self.view.set_image(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).await;
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).unwrap());
         }
     }
 
@@ -127,7 +137,7 @@ impl Chicken {
         self.jump_posib = false;
     }
 
-    async fn attack(&mut self) {
+    fn attack(&mut self) {
         let time = get_time();
         if time - self.last_attack_time > 0.5 {
             self.attack = true;
@@ -136,32 +146,27 @@ impl Chicken {
         }
     }
 
-    async fn idle(&mut self) {
+    fn idle(&mut self) {
         if self.side {
             if !self.attack {
-                self.view.set_image(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).await;
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
             } else {
-                self.view.set_image(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).await;
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).unwrap());
             }
         } else {
             if !self.attack {
-                self.view.set_image(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).await;
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).unwrap());
             } else {
-                self.view.set_image(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).await;
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).unwrap());
             }
         }
-    }
-
-    //for testing; zero gravity
-    pub fn zero_g(&mut self) {
-        self.accell.y -= 2.0;
     }
 
     pub fn reset_pos(&mut self) {
         self.view.set_position(self.start_pos);
     }
 
-    pub async fn allpurpose_hurt(&mut self) {
+    pub fn hurt_single(&mut self, ) {
         if self.health < 1 && self.stocks > 1 {
             self.stocks -= 1;
             self.health = 10;
@@ -171,8 +176,14 @@ impl Chicken {
         } else {
             self.health = 0;
         }
-        self.health_bar.set_image(&format!("assets/health/{}/health{}.png", self.player, self.health)).await;
-        self.stock_counter.set_image(&format!("assets/health/stocks/{}.png", self.stocks)).await;
+        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/{}/health{}.png", self.player, self.health)).unwrap());
+        self.stock_counter.set_preload(self.tm.get_preload(&format!("assets/health/stocks/{}.png", self.stocks)).unwrap());
+    }
+
+    pub fn allpurpose_hurt(&mut self, damage: i32) {
+        for _ in 0..damage {
+            self.hurt_single();
+        }
     }
 
     pub fn check_full_dead(&self) -> bool {
@@ -183,7 +194,7 @@ impl Chicken {
         }
     }
 
-    pub async fn check_floor_at(&mut self, floordims: Vec<Vec2>) {
+    pub fn check_floor_at(&mut self, floordims: Vec<Vec2>) {
         //This function works that floordims[0] is the pos
         //and [1] is the size. for 0, x = x and y=y.
         //for 1, x=width and y=height. don't use the actual
@@ -228,7 +239,7 @@ impl Chicken {
 
         if play_bottom > 960.0 {
             self.reset_pos();
-            self.allpurpose_hurt().await;
+            self.allpurpose_hurt(1);
         }
 
         if temp_jump_possib {
@@ -236,7 +247,7 @@ impl Chicken {
         }
     }
 
-    pub async fn automove(&mut self) {
+    pub fn automove(&mut self) {
         if self.attack_clock {
             self.attack_clock = false;
             
@@ -250,22 +261,22 @@ impl Chicken {
                 keypress = true;
             }
             if is_key_down(KeyCode::A) {
-                self.move_left().await;
+                self.move_left();
                 keypress = true;
             }
 
             if is_key_down(KeyCode::D) {
-                self.move_right().await;
+                self.move_right();
                 keypress = true;
             }
 
             if is_key_down(KeyCode::Space) {
-                self.attack().await;
+                self.attack();
                 keypress = true;
             }
 
             if !keypress {
-                self.idle().await;
+                self.idle();
             }
 
         } else {
@@ -276,22 +287,22 @@ impl Chicken {
                 keypress = true;
             }
             if is_key_down(KeyCode::Left) {
-                self.move_left().await;
+                self.move_left();
                 keypress = true;
             }
 
             if is_key_down(KeyCode::Right) {
-                self.move_right().await;
+                self.move_right();
                 keypress = true;
             }
 
             if is_key_down(KeyCode::M) {
-                self.attack().await;
+                self.attack();
                 keypress = true;
             }
 
             if !keypress {
-                self.idle().await;
+                self.idle();
             }
         }
         
