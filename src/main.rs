@@ -33,8 +33,7 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let tm = TextureManager::new();
-    let all_assets = vec![
-        "assets/welcome_logo.png",
+let all_assets = vec![
         "assets/class_images/chicken/p1/death.png",
         "assets/class_images/chicken/p1/attack_l.png",
         "assets/class_images/chicken/p1/attack_r.png",
@@ -45,6 +44,16 @@ async fn main() {
         "assets/class_images/chicken/p2/attack_l.png",
         "assets/class_images/chicken/p2/idle_r.png",
         "assets/class_images/chicken/p2/idle_l.png",
+        "assets/class_images/turkey/p1/attack_r.png",
+        "assets/class_images/turkey/p1/death.png",
+        "assets/class_images/turkey/p1/idle_r.png",
+        "assets/class_images/turkey/p1/attack_l.png",
+        "assets/class_images/turkey/p1/idle_l.png",
+        "assets/class_images/turkey/p2/attack_r.png",
+        "assets/class_images/turkey/p2/death.png",
+        "assets/class_images/turkey/p2/idle_r.png",
+        "assets/class_images/turkey/p2/attack_l.png",
+        "assets/class_images/turkey/p2/idle_l.png",
         "assets/health/p1/health0.png",
         "assets/health/p1/health1.png",
         "assets/health/p1/health10.png",
@@ -81,7 +90,9 @@ async fn main() {
         "assets/rank_images/2.png",
         "assets/rank_images/3.png",
         "assets/rank_images/4.png",
-        "assets/rank_images/5.png"
+        "assets/rank_images/5.png",
+        "assets/welcome_screen/mainscreenbg.png",
+        "assets/welcome_screen/welcome_logo.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 

@@ -6,15 +6,28 @@ Description: This is the map 1 screen
 use macroquad::prelude::*;
 use crate::ui::grid::{ draw_grid };
 use crate::classes::chicken::Chicken;
+use crate::classes::turkey::Turkey;
 use crate::utils::collision::check_collision;
 use crate::maps::map_1::Map;
 use crate::utils::preload_image::TextureManager;
+use crate::utils::player_type::PlayerType;
 
 pub async fn run(tm: &TextureManager, game_info: Vec<String>) -> bool {
     let mut map = Map::new().await;
     let playerspawn = map.spawn();
-    let mut p1 = Chicken::new(tm, playerspawn[0].x, playerspawn[0].y, "p1".to_string(), playerspawn[0]).await;
-    let mut p2 = Chicken::new(tm, playerspawn[1].x, playerspawn[1].y, "p2".to_string(), playerspawn[1]).await;
+
+    let mut p1 = if game_info[0] == "turkey" {
+        PlayerType::Turkey(Turkey::new(tm, playerspawn[0].x, playerspawn[0].y, "p1".to_string(), playerspawn[0]).await)
+    } else {
+        PlayerType::Chicken(Chicken::new(tm, playerspawn[0].x, playerspawn[0].y, "p1".to_string(), playerspawn[0]).await)
+    };
+
+    let mut p2 = if game_info[1] == "turkey" {
+        PlayerType::Turkey(Turkey::new(tm, playerspawn[1].x, playerspawn[1].y, "p2".to_string(), playerspawn[1]).await)
+    } else {
+        PlayerType::Chicken(Chicken::new(tm, playerspawn[1].x, playerspawn[1].y, "p2".to_string(), playerspawn[1]).await)
+    };
+
     p1.init();
     p2.init();
     loop {

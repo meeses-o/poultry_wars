@@ -1,7 +1,7 @@
 //Created by Oliver
 //May 13th 2026
 
-use macroquad::{experimental::collections::storage::get, prelude::*};
+use macroquad::prelude::*;
 use crate::ui::still_image::StillImage;
 use crate::utils::preload_image::TextureManager;
 
@@ -21,6 +21,7 @@ pub struct Turkey{
     last_attack_time: f64,
     side: bool,                 //left = false, right = true
     attack_clock: bool,
+    attack_cooldown: f32,
 }
 
 impl Turkey {
@@ -42,6 +43,7 @@ impl Turkey {
                 last_attack_time: -0.5,
                 side: false,
                 attack_clock: false,
+                attack_cooldown: 1.0,
             }  
         } else {
             Turkey {
@@ -60,12 +62,13 @@ impl Turkey {
                 last_attack_time: -0.5,
                 side: true,
                 attack_clock: false,
+                attack_cooldown: 1.0,
             }
         }
     }
 
     pub fn init(&mut self) {
-        self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
+        self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_r.png", self.player)).unwrap());
         self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/{}/health10.png", self.player)).unwrap());
         self.stock_counter.set_preload(self.tm.get_preload("assets/health/stocks/3.png").unwrap());
     }
@@ -114,22 +117,22 @@ impl Turkey {
     }
 
     fn move_left(&mut self) {
-        self.speed.x -= 0.5;
+        self.speed.x -= 0.6;
         self.side = false;
         if !self.attack {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_l.png", self.player)).unwrap());
         } else {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_l.png", self.player)).unwrap());
         }
     }
 
     fn move_right(&mut self) {
-        self.speed.x += 0.5;
+        self.speed.x += 0.6;
         self.side = true;
         if !self.attack {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_r.png", self.player)).unwrap());
         } else {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_r.png", self.player)).unwrap());
         }
     }
 
@@ -140,7 +143,7 @@ impl Turkey {
 
     fn attack(&mut self) {
         let time = get_time();
-        if time - self.last_attack_time > 0.7 {
+        if time - self.last_attack_time > self.attack_cooldown as f64 {
             self.attack = true;
             self.attack_clock = true;
             self.last_attack_time = time;
@@ -150,15 +153,15 @@ impl Turkey {
     fn idle(&mut self) {
         if self.side {
             if !self.attack {
-                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_r.png", self.player)).unwrap());
             } else {
-                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).unwrap());
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_r.png", self.player)).unwrap());
             }
         } else {
             if !self.attack {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_l.png", self.player)).unwrap());
             } else {
-                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).unwrap());
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_l.png", self.player)).unwrap());
             }
         }
     }
@@ -167,7 +170,7 @@ impl Turkey {
         self.view.set_position(self.start_pos);
     }
 
-    pub fn allpurpose_hurt(&mut self) {
+    fn hurt_single(&mut self) {
         if self.health < 1 && self.stocks > 1 {
             self.stocks -= 1;
             self.health = 10;
@@ -179,6 +182,12 @@ impl Turkey {
         }
         self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/{}/health{}.png", self.player, self.health)).unwrap());
         self.stock_counter.set_preload(self.tm.get_preload(&format!("assets/health/stocks/{}.png", self.stocks)).unwrap());
+    }
+
+    pub fn allpurpose_hurt(&mut self, damage: i32) {
+        for _ in 0..damage {
+            self.hurt_single();
+        }
     }
 
     pub fn check_full_dead(&self) -> bool {
@@ -234,7 +243,7 @@ impl Turkey {
 
         if play_bottom > 960.0 {
             self.reset_pos();
-            self.allpurpose_hurt();
+            self.allpurpose_hurt(1);
         }
 
         if temp_jump_possib {
@@ -301,7 +310,7 @@ impl Turkey {
             }
         }
         
-        if get_time() - self.last_attack_time > 0.7 {
+        if get_time() - self.last_attack_time > self.attack_cooldown as f64 {
             self.attack = false;
         }
 

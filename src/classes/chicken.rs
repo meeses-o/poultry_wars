@@ -21,6 +21,7 @@ pub struct Chicken{
     last_attack_time: f64,
     side: bool,                 //left = false, right = true
     attack_clock: bool,
+    attack_cooldown: f32,
 }
 impl Chicken {
     pub async fn new(tm:&TextureManager,x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
@@ -41,6 +42,7 @@ impl Chicken {
                 last_attack_time: -0.5,
                 side: false,
                 attack_clock: false,
+                attack_cooldown: 0.5,
             }  
         } else {
             Chicken {
@@ -59,6 +61,7 @@ impl Chicken {
                 last_attack_time: -0.5,
                 side: true,
                 attack_clock: false,
+                attack_cooldown: 0.5,
             }
         }
     }
@@ -139,7 +142,7 @@ impl Chicken {
 
     fn attack(&mut self) {
         let time = get_time();
-        if time - self.last_attack_time > 0.5 {
+        if time - self.last_attack_time > self.attack_cooldown as f64 {
             self.attack = true;
             self.attack_clock = true;
             self.last_attack_time = time;
@@ -166,7 +169,7 @@ impl Chicken {
         self.view.set_position(self.start_pos);
     }
 
-    pub fn hurt_single(&mut self, ) {
+    fn hurt_single(&mut self) {
         if self.health < 1 && self.stocks > 1 {
             self.stocks -= 1;
             self.health = 10;
@@ -306,7 +309,7 @@ impl Chicken {
             }
         }
         
-        if get_time() - self.last_attack_time > 0.5 {
+        if get_time() - self.last_attack_time > self.attack_cooldown as f64 {
             self.attack = false;
         }
 

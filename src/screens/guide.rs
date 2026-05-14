@@ -10,8 +10,7 @@ use crate::ui::label::Label;
 use crate::ui::text_button::TextButton;
 
 pub async fn run() -> String{
-    let btn_exit = TextButton::new(20.0, 20.0, 100.0, 50.0, "Exit", BLACK, BLUE, 15);
-    let btn_login = TextButton::new(100.0, 20.0, 100.0, 50.0, "Login", BLACK, BLUE, 15);
+    let btn_back = TextButton::new(100.0, 20.0, 100.0, 50.0, "Back", BLACK, BLUE, 15);
     let lbl_guide = Label::new(
         "Greeting and Salutations dear players!\n
         Welcome to Poultry WarsThis is a 1v1 game where you, our dear players would be playing against another player as CHICKENS!In the game you have keys as\n
@@ -27,11 +26,8 @@ loop{
     clear_background(BEIGE);
     draw_grid(50.0, BLACK);
     lbl_guide.draw();
-    if btn_login.click(){
-        return "login".to_string();
-    }
-    if btn_exit.click(){
-        return "exit".to_string();
+    if btn_back.click(){
+        return "welcome".to_string();
     }
     next_frame().await;
 

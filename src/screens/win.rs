@@ -31,7 +31,7 @@ pub async fn run(tm: &TextureManager, user1: &String, user2: &String, winner: bo
     loop {
         clear_background(WHITE);
         if btn_menu.click(){
-            return "guide".to_string();
+            return "welcome".to_string();
         }
         lbl_winner.draw();
         win_img.draw();
