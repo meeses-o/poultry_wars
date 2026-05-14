@@ -33,7 +33,7 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let tm = TextureManager::new();
-let all_assets = vec![
+    let all_assets = vec![
         "assets/class_images/chicken/p1/death.png",
         "assets/class_images/chicken/p1/attack_l.png",
         "assets/class_images/chicken/p1/attack_r.png",
@@ -92,7 +92,8 @@ let all_assets = vec![
         "assets/rank_images/4.png",
         "assets/rank_images/5.png",
         "assets/welcome_screen/mainscreenbg.png",
-        "assets/welcome_screen/welcome_logo.png"
+        "assets/welcome_screen/welcome_logo.png",
+        "assets/selection/ready.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 
@@ -106,7 +107,7 @@ let all_assets = vec![
                 "welcome" => screens::welcome::run(&tm).await,
                 "guide" => screens::guide::run().await,
                 "game" => {
-                    let game_info = screens::selection::run(&tm).await;
+                    let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await;
                     let winner = screens::game::run(&tm, game_info).await;
                     let retscreen = screens::win::run(&tm, &player_info[0].username, &player_info[1].username, winner).await;
                     retscreen
