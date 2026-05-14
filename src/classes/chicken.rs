@@ -22,6 +22,7 @@ pub struct Chicken{
     side: bool,                 //left = false, right = true
     attack_clock: bool,
     attack_cooldown: f32,
+    slam: bool,
 }
 impl Chicken {
     pub async fn new(tm:&TextureManager,x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
@@ -43,6 +44,7 @@ impl Chicken {
                 side: false,
                 attack_clock: false,
                 attack_cooldown: 0.5,
+                slam: false,
             }  
         } else {
             Chicken {
@@ -62,6 +64,7 @@ impl Chicken {
                 side: true,
                 attack_clock: false,
                 attack_cooldown: 0.5,
+                slam: false,
             }
         }
     }
@@ -84,7 +87,10 @@ impl Chicken {
 
     pub fn framemove(&mut self) {
         let topspeedx = 6.5;
-        let topspeedy = 5.0;
+        let mut topspeedy = 5.0;
+        if self.slam {
+            topspeedy = 9.0;
+        }
 
         //accelleration
         self.speed += self.accell;
@@ -147,6 +153,11 @@ impl Chicken {
             self.attack_clock = true;
             self.last_attack_time = time;
         }
+    }
+
+    fn slam(&mut self) {
+        self.speed.y = 9.0;
+        self.slam = true;
     }
 
     fn idle(&mut self) {
@@ -247,6 +258,9 @@ impl Chicken {
 
         if temp_jump_possib {
             self.jump_posib = true;
+            if self.slam {
+                self.slam = false;
+            }
         }
     }
 
@@ -278,6 +292,10 @@ impl Chicken {
                 keypress = true;
             }
 
+            if is_key_down(KeyCode::S) && !self.slam{
+                self.slam();
+            }
+
             if !keypress {
                 self.idle();
             }
@@ -297,6 +315,10 @@ impl Chicken {
             if is_key_down(KeyCode::Right) {
                 self.move_right();
                 keypress = true;
+            }
+
+            if is_key_down(KeyCode::Down) {
+                
             }
 
             if is_key_down(KeyCode::M) {
