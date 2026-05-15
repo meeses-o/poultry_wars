@@ -22,6 +22,8 @@ pub struct Turkey{
     side: bool,                 //left = false, right = true
     attack_clock: bool,
     attack_cooldown: f32,
+    last_dash_time: f64,
+    dash_possible: bool,
 }
 
 impl Turkey {
@@ -44,6 +46,8 @@ impl Turkey {
                 side: false,
                 attack_clock: false,
                 attack_cooldown: 1.0,
+                last_dash_time: 0.0,
+                dash_possible: true,
             }  
         } else {
             Turkey {
@@ -63,6 +67,8 @@ impl Turkey {
                 side: true,
                 attack_clock: false,
                 attack_cooldown: 1.0,
+                last_dash_time: 0.0,
+                dash_possible: true,
             }
         }
     }
@@ -84,7 +90,10 @@ impl Turkey {
     }
 
     pub fn framemove(&mut self) {
-        let topspeedx = 4.5;
+        let mut topspeedx = 4.5;
+        if !self.dash_possible {
+            topspeedx = 10.0;
+        }
         let topspeedy = 5.0;
 
         //accelleration
@@ -110,6 +119,7 @@ impl Turkey {
         } else {
             self.speed.x = 0.0;
         }
+
 
         //positional movement
         let pos = self.view.get_pos() + self.speed;
@@ -139,6 +149,18 @@ impl Turkey {
     fn jump(&mut self) {
         self.speed.y = -6.0;
         self.jump_posib = false;
+    }
+
+    fn dash(&mut self) {
+        if (get_time() - self.last_dash_time > 1.2) && self.dash_possible {
+            self.dash_possible = false;
+            self.last_dash_time = get_time();
+            if self.side {
+                self.speed.x = 10.0;
+            } else {
+                self.speed.x = -10.0;
+            }
+        }
     }
 
     fn attack(&mut self) {
@@ -248,6 +270,9 @@ impl Turkey {
 
         if temp_jump_possib {
             self.jump_posib = true;
+            if !self.dash_possible {
+                self.dash_possible = true;
+            }
         }
     }
 
@@ -279,6 +304,11 @@ impl Turkey {
                 keypress = true;
             }
 
+            if is_key_down(KeyCode::S) {
+                self.dash();
+                keypress = true;
+            }
+
             if !keypress {
                 self.idle();
             }
@@ -302,6 +332,11 @@ impl Turkey {
 
             if is_key_down(KeyCode::M) {
                 self.attack();
+                keypress = true;
+            }
+
+            if is_key_down(KeyCode::Down) {
+                self.dash();
                 keypress = true;
             }
 

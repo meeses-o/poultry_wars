@@ -109,8 +109,8 @@ async fn main() {
                 "game" => {
                     let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await;
                     let winner = screens::game::run(&tm, game_info).await;
-                    let retscreen = screens::win::run(&tm, &player_info[0].username, &player_info[1].username, winner).await;
-                    retscreen
+                    let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner).await;
+                    retscreen[2].username.clone()
                 },
                 _ => break,
             };

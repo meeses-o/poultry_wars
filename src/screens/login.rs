@@ -12,15 +12,17 @@ use crate::ui::text_input::TextInput;
 use crate::ui::label::Label;
 
 #[derive(Debug, Deserialize)]
+#[derive(Clone)]
 pub struct LoginRecord {
+    pub id: i32,
     pub username: String,
     pub password: String,
     pub rank: String,
     pub money: String
 }
 impl LoginRecord {
-    fn new(username: String, password: String, rank: String, money: String) -> Self {
-        LoginRecord { username: username, password: password, rank: rank, money: money }
+    pub fn new(id: i32, username: String, password: String, rank: String, money: String) -> Self {
+        LoginRecord { id: id, username: username, password: password, rank: rank, money: money }
     }
  }
 
@@ -116,11 +118,12 @@ pub async fn run() -> Vec<LoginRecord>{
             if username.is_empty() || password.is_empty() {
                 lbl_message.set_text("Please enter both a username and password.".to_string());
             } else {
-                let mut local_player_info = LoginRecord::new("".to_string(), "".to_string(), "".to_string(), "".to_string());
+                let mut local_player_info = LoginRecord::new(0, "".to_string(), "".to_string(), "".to_string(), "".to_string());
                 let records_err = client.fetch_table("poultrywars").await;
                 if let Ok(records) = records_err {
                     for player in &records {
                         if player.username == username && player.password == password {
+                            local_player_info.id = player.id.clone();
                             local_player_info.username = player.username.clone();
                             local_player_info.password = player.password.clone();
                             local_player_info.rank = player.rank.clone();
@@ -148,14 +151,14 @@ pub async fn run() -> Vec<LoginRecord>{
         if guest_button.click() {
             // log in as guest1 on database, rank and money will not be counted for guests, if guest1 is already logged in, log in as guest2
             if ret_player_data.len() == 0 {
-                ret_player_data.push(LoginRecord { username: "guest1".to_string(), password: "guest".to_string(), rank: "0".to_string(), money: "0".to_string() });
+                ret_player_data.push(LoginRecord { id: 0, username: "guest1".to_string(), password: "guest".to_string(), rank: "0".to_string(), money: "0".to_string() });
             } else if ret_player_data.len() == 1{
-                ret_player_data.push(LoginRecord { username: "guest2".to_string(), password: "guessed".to_string(), rank: "0".to_string(), money: "0".to_string() });
+                ret_player_data.push(LoginRecord { id: 0, username: "guest2".to_string(), password: "guessed".to_string(), rank: "0".to_string(), money: "0".to_string() });
             }
         }
 
         if is_key_pressed(KeyCode::K) {
-            return vec![LoginRecord::new("o_money".to_string(), "osmond".to_string(), "0".to_string(), "0".to_string()), LoginRecord::new("mujib".to_string(), "fire123".to_string(), "0".to_string(), "0".to_string())];
+            return vec![LoginRecord::new(3, "o_money".to_string(), "osmond".to_string(), "0".to_string(), "0".to_string()), LoginRecord::new(2, "mujib".to_string(), "fire123".to_string(), "0".to_string(), "0".to_string())];
         }
 
         if ret_player_data.len() > 1 {

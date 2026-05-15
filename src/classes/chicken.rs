@@ -157,6 +157,7 @@ impl Chicken {
 
     fn slam(&mut self) {
         self.speed.y = 9.0;
+        self.speed.x = 0.0;
         self.slam = true;
     }
 
@@ -294,6 +295,7 @@ impl Chicken {
 
             if is_key_down(KeyCode::S) && !self.slam{
                 self.slam();
+                keypress = true;
             }
 
             if !keypress {
@@ -318,7 +320,8 @@ impl Chicken {
             }
 
             if is_key_down(KeyCode::Down) {
-                
+                self.slam();
+                keypress = true;
             }
 
             if is_key_down(KeyCode::M) {
