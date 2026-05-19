@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Eagle+Lake&family=Jacquard+24&display=swap');
+
+body {
+    background-color: azure;
+}
+
+h1 {
+    font-family: "Jacquard 24", serif;
+    font-size: 7rem;
+}
+
+h2 {
+    font-family: "Jacquard 24", serif;
+    font-size: 3rem;
+}
+
+.entries {
+    display: flex;
+    flex-direction: column;
+    padding: 2% 7% 0 7%;
+    height: fit-content;
+    gap: 2rem;
+}
+
+.title {
+    background-color: rgb(120, 227, 149);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8rem;
+}
+
+.abtwrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding:0 7% 0 7%;
+}
+
+.about {
+    background-color: bisque;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5% 0 5%;
+}
+
+.h2wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 5rem;
+}
+
+.abtp {
+    font-family: "Eagle Lake", serif;
+}
+
+.pbtnwrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 5rem;
+}
+
+.playbtn {
+    background-color:blanchedalmond;
+    font-family: "Eagle Lake", serif;
+    font-size: 1rem;
+    height: 4rem;
+    width: 6rem;
+}

@@ -29,40 +29,40 @@ Spacebar - to attack 	               M - to attack
 You will be able to store your data such as:
 Your Rank,Username,Password",
         20.0, 350.0, 15);
-    let img_up = StillImage::new(
-        "assets/arrow_up.png",
-        100.0,  // width
-        200.0,  // height
-        550.0,  // x position
-        380.0,   // y position
-        true,   // Enable stretching
-        1.0,    // Normal zoom (100%)
-    ).await;
-    let img_left = StillImage::new(
-        "assets/arrow_left.png",
-        100.0,  // width
-        200.0,  // height
-        550.0,  // x position
-        400.0,   // y position
-        true,   // Enable stretching
-        1.0,    // Normal zoom (100%)
-    ).await;
-    let img_right = StillImage::new(
-        "assets/arrow_right.png",
-        100.0,  // width
-        200.0,  // height
-        550.0,  // x position
-        430.0,   // y position
-        true,   // Enable stretching
-        1.0,    // Normal zoom (100%)
-    ).await;
+
+    //YOU MUST PRELOAD THESE.
+
+    // let img_up = StillImage::new(
+    //     "assets/arrow_up.png",
+    //     100.0,  // width
+    //     200.0,  // height
+    //     550.0,  // x position
+    //     380.0,   // y position
+    //     true,   // Enable stretching
+    //     1.0,    // Normal zoom (100%)
+    // ).await;
+    // let img_left = StillImage::new(
+    //     "assets/arrow_left.png",
+    //     100.0,  // width
+    //     200.0,  // height
+    //     550.0,  // x position
+    //     400.0,   // y position
+    //     true,   // Enable stretching
+    //     1.0,    // Normal zoom (100%)
+    // ).await;
+    // let img_right = StillImage::new(
+    //     "assets/arrow_right.png",
+    //     100.0,  // width
+    //     200.0,  // height
+    //     550.0,  // x position
+    //     430.0,   // y position
+    //     true,   // Enable stretching
+    //     1.0,    // Normal zoom (100%)
+    // ).await;
     
 loop{
     clear_background(BEIGE);
     draw_grid(50.0, BLACK);
-    img_up.draw();
-    img_left.draw();
-    img_right.draw();
     lbl_guide.draw();
     lbl_movement.draw();
     if btn_back.click(){
