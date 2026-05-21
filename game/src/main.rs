@@ -93,7 +93,8 @@ async fn main() {
         "assets/rank_images/5.png",
         "assets/welcome_screen/mainscreenbg.png",
         "assets/welcome_screen/welcome_logo.png",
-        "assets/selection/ready.png"
+        "assets/selection/ready.png",
+        "assets/win_screen/winscreen.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 

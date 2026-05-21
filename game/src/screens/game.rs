@@ -8,12 +8,21 @@ use crate::ui::grid::{ draw_grid };
 use crate::classes::chicken::Chicken;
 use crate::classes::turkey::Turkey;
 use crate::utils::collision::check_collision;
-use crate::maps::map_1::Map;
+use crate::maps::map_1::Map1;
+use crate::maps::map_2::Map2;
 use crate::utils::preload_image::TextureManager;
 use crate::utils::player_type::PlayerType;
+use crate::utils::map_type::MapType;
 
 pub async fn run(tm: &TextureManager, game_info: Vec<String>) -> bool {
-    let mut map = Map::new().await;
+    
+    let mut map = if game_info[2] == "dirt".to_string() {
+        MapType::Map1(Map1::new(tm.clone()).await)
+    } else {
+        MapType::Map2(Map2::new(tm.clone()).await)
+    };
+
+    map.init();
     let playerspawn = map.spawn();
 
     let mut p1 = if game_info[0] == "turkey" {
@@ -66,7 +75,6 @@ pub async fn run(tm: &TextureManager, game_info: Vec<String>) -> bool {
                 p1.allpurpose_hurt(p2.get_attack_dmg());
             }
         }
-
 
         //draws
         map.draw();

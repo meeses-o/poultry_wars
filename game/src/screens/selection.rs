@@ -123,7 +123,7 @@ pub async fn run(tm: &TextureManager, p1_user: &String, p2_user: &String) -> Vec
     img_p2_rdy.set_preload(tm.get_preload("assets/selection/ready.png").unwrap());
     img_map_rdy.set_preload(tm.get_preload("assets/selection/ready.png").unwrap());
 
-    let mut player_info = vec!["u".to_string(), "u".to_string(), "u".to_string()];
+    let mut player_info = vec!["u".to_string(), "u".to_string(), "u".to_string()]; //p1, p2, map
     
 
 loop{
