@@ -13,6 +13,7 @@ mod utils;
 use macroquad::prelude::*;
 use crate::screens::login::LoginRecord;
 use crate::utils::preload_image::TextureManager;
+use crate::utils::update_player_dbs::update_player_dbs;
 
 
 
@@ -94,12 +95,13 @@ async fn main() {
         "assets/welcome_screen/mainscreenbg.png",
         "assets/welcome_screen/welcome_logo.png",
         "assets/selection/ready.png",
-        "assets/win_screen/winscreen.png"
+        "assets/win_screen/winscreen.png",
+        "assets/win_screen/trophy.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 
 
-    let player_info: Vec<LoginRecord> = screens::login::run().await;
+    let mut player_info: Vec<LoginRecord> = screens::login::run().await;
     let mut last_switch = get_time() - 0.02;
     let mut current_screen = "welcome".to_string();
     loop {
@@ -111,6 +113,12 @@ async fn main() {
                     let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await;
                     let winner = screens::game::run(&tm, game_info).await;
                     let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner).await;
+                    player_info[0] = retscreen[0].clone();
+                    player_info[1] = retscreen[1].clone();
+                    let res = update_player_dbs(vec![player_info[0].clone(), player_info[1].clone()]).await;
+                    if let Err(e) = res {
+                        println!("Error updating player records: {}", e);
+                    }
                     retscreen[2].username.clone()
                 },
                 _ => break,

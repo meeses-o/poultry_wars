@@ -407,7 +407,7 @@ async fn generate_mask(texture_path: &str, width: usize, height: usize) -> Optio
 
 pub async fn set_texture_main(texture_path: &str) -> (Texture2D, Option<Vec<u8>>) {
     let texture = load_texture(texture_path).await.unwrap();
-    texture.set_filter(FilterMode::Linear);
+    texture.set_filter(FilterMode::Nearest);
     let tex_width = texture.width() as usize;
     let tex_height = texture.height() as usize;
     let transparency_mask = generate_mask(texture_path, tex_width, tex_height).await;

@@ -93,7 +93,7 @@ pub async fn run() -> Vec<LoginRecord>{
                 lbl_message.set_text("Please enter both a username and password.".to_string());
             } else {
                 let new_record = DatabaseTable {
-                    id: 0,
+                    ID: 0,
                     username,
                     password,
                     rank: "0".to_string(),
@@ -101,8 +101,8 @@ pub async fn run() -> Vec<LoginRecord>{
                 };
 
                 match client.insert_record("poultrywars", &new_record).await {
-                    Ok(id) => {
-                        lbl_message.set_text(format!("Account created (ID: {})", id));
+                    Ok(ID) => {
+                        lbl_message.set_text(format!("Account created (ID: {})", ID));
                     }
                     Err(err) => {
                         lbl_message.set_text(format!("Failed to insert record: {}", err));
@@ -123,7 +123,7 @@ pub async fn run() -> Vec<LoginRecord>{
                 if let Ok(records) = records_err {
                     for player in &records {
                         if player.username == username && player.password == password {
-                            local_player_info.id = player.id.clone();
+                            local_player_info.id = player.ID.clone();
                             local_player_info.username = player.username.clone();
                             local_player_info.password = player.password.clone();
                             local_player_info.rank = player.rank.clone();
@@ -146,19 +146,18 @@ pub async fn run() -> Vec<LoginRecord>{
                     lbl_message.set_text(format!("FATAL: FETCH ERR: {}", e));
                 }
             }
+
+            txt_username.set_text("");
+            txt_password.set_text("");
         }
 
-        if guest_button.click() {
+        if guest_button.click() || is_key_pressed(KeyCode::K){
             // log in as guest1 on database, rank and money will not be counted for guests, if guest1 is already logged in, log in as guest2
             if ret_player_data.len() == 0 {
                 ret_player_data.push(LoginRecord { id: 0, username: "guest1".to_string(), password: "guest".to_string(), rank: "0".to_string(), money: "0".to_string() });
             } else if ret_player_data.len() == 1{
                 ret_player_data.push(LoginRecord { id: 0, username: "guest2".to_string(), password: "guessed".to_string(), rank: "0".to_string(), money: "0".to_string() });
             }
-        }
-
-        if is_key_pressed(KeyCode::K) {
-            return vec![LoginRecord::new(3, "o_money".to_string(), "osmond".to_string(), "0".to_string(), "0".to_string()), LoginRecord::new(2, "mujib".to_string(), "fire123".to_string(), "0".to_string(), "0".to_string())];
         }
 
         if ret_player_data.len() > 1 {

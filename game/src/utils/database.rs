@@ -183,7 +183,7 @@ pub const TURSO_AUTH_TOKEN: &str = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjo
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct DatabaseTable {
     #[serde(default, skip_serializing_if = "is_zero")]
-    pub id: i32,
+    pub ID: i32,
     pub username: String,
     pub password: String, 
     pub rank: String,
@@ -274,7 +274,7 @@ impl DatabaseClient {
             "UPDATE {} SET {} WHERE id = {}",
             table,
             set_clause.join(", "),
-            record.id
+            record.ID
         );
         self.execute_sql(&sql).await
     }
