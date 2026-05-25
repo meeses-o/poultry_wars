@@ -1,7 +1,7 @@
 //Created by Oliver
 //Apr 24th 2026
 
-use macroquad::{experimental::collections::storage::get, prelude::*};
+use macroquad::prelude::*;
 use crate::ui::still_image::StillImage;
 use crate::utils::preload_image::TextureManager;
 
@@ -24,6 +24,7 @@ pub struct Chicken{
     attack_cooldown: f32,
     slam: bool,
 }
+
 impl Chicken {
     pub async fn new(tm:&TextureManager,x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
         if player == "p1".to_string() {
@@ -86,43 +87,47 @@ impl Chicken {
     }
 
     pub fn framemove(&mut self) {
+        let dt_scale = get_frame_time() * 166.0;
+        
         let topspeedx = 6.5;
         let mut topspeedy = 5.0;
         if self.slam {
             topspeedy = 9.0;
         }
 
-        //accelleration
-        self.speed += self.accell;
+        // Acceleration over time (scaled)
+        self.speed += self.accell * dt_scale;
 
-        //topspeed limiter on the x
+        // Topspeed limiter on the x (unscaled limit)
         if self.speed.x > topspeedx {
             self.speed.x = topspeedx;
         } else if self.speed.x < -topspeedx {
             self.speed.x = -topspeedx;
         }
 
-        //topspeed limiter on the y
+        // Topspeed limiter on the y (unscaled limit)
         if self.speed.y > topspeedy {
             self.speed.y = topspeedy;
         }
 
-        //decelleration
-        if self.speed.x > 0.5 {
-            self.speed.x -= 0.5;
-        } else if self.speed.x < -0.5 {
-            self.speed.x += 0.5;
+        // Deceleration over time (scaled)
+        let decel = 0.5 * dt_scale;
+        if self.speed.x > decel {
+            self.speed.x -= decel;
+        } else if self.speed.x < -decel {
+            self.speed.x += decel;
         } else {
             self.speed.x = 0.0;
         }
 
-        //positional movement
-        let pos = self.view.get_pos() + self.speed;
+        // Positional movement (scaled to frame time)
+        let pos = self.view.get_pos() + (self.speed * dt_scale);
         self.view.set_position(pos);
     }
 
     fn move_left(&mut self) {
-        self.speed.x -= 0.6;
+        let dt_scale = get_frame_time() * 166.0;
+        self.speed.x -= 0.6 * dt_scale; // Scaled acceleration
         self.side = false;
         if !self.attack {
             self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).unwrap());
@@ -132,7 +137,8 @@ impl Chicken {
     }
 
     fn move_right(&mut self) {
-        self.speed.x += 0.6;
+        let dt_scale = get_frame_time() * 166.0;
+        self.speed.x += 0.6 * dt_scale; // Scaled acceleration
         self.side = true;
         if !self.attack {
             self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
@@ -142,6 +148,7 @@ impl Chicken {
     }
 
     fn jump(&mut self) {
+        // Impulse - No scaling needed
         self.speed.y = -7.0;
         self.jump_posib = false;
     }
@@ -156,6 +163,7 @@ impl Chicken {
     }
 
     fn slam(&mut self) {
+        // Impulse - No scaling needed
         self.speed.y = 9.0;
         self.speed.x = 0.0;
         self.slam = true;
@@ -210,18 +218,11 @@ impl Chicken {
     }
 
     pub fn check_floor_at(&mut self, floordims: Vec<Vec2>) {
-        //This function works that floordims[0] is the pos
-        //and [1] is the size. for 0, x = x and y=y.
-        //for 1, x=width and y=height. don't use the actual
-        //collision module rather coordinates. 
-
-        //Player dims
         let mut play_top = self.view.get_y();
         let mut play_bottom = self.view.get_y()+self.view.size().y;
         let play_left = self.view.get_x();
         let play_right = self.view.get_x()+self.view.size().x;
 
-        //Plat dims
         let plat_top = floordims[0].y;
         let plat_bottom = floordims[0].y+floordims[1].y;
         let plat_left = floordims[0].x;
@@ -231,7 +232,6 @@ impl Chicken {
 
         let mut temp_jump_possib = false;
 
-        //top/bottom of the platform
         if play_bottom > plat_top && play_bottom < plat_mid_y && play_left < plat_right && play_right > plat_left { //top
             self.view.set_y(plat_top-self.view.size().y);
             temp_jump_possib = true;
@@ -243,7 +243,6 @@ impl Chicken {
         play_top = self.view.get_y();
         play_bottom = self.view.get_y()+self.view.size().y;
 
-        //left/right of the platform
         if play_bottom > plat_top && play_top < plat_bottom && play_left < plat_right && play_left > plat_mid_x { //right
             self.view.set_x(plat_right);
             temp_jump_possib = false;
@@ -268,7 +267,6 @@ impl Chicken {
     pub fn automove(&mut self) {
         if self.attack_clock {
             self.attack_clock = false;
-            
         }
 
         if self.player == "p1".to_string() {
@@ -349,5 +347,3 @@ impl Chicken {
         1
     }
 }
-
-//1280x960

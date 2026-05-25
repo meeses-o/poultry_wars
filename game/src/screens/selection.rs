@@ -64,6 +64,16 @@ pub async fn run(tm: &TextureManager, p1_user: &String, p2_user: &String) -> Vec
         GREEN,
         30
     );
+    let btn_map_city = TextButton::new(
+        900.0,
+        290.0,
+        200.0,
+        60.0,
+        "City",
+        BLUE,
+        GREEN,
+        30
+    );
     let btn_p1_rdy = TextButton::new(
         100.0,
         400.0,
@@ -162,6 +172,8 @@ loop{
     }
     if player_info[2] == "dirt".to_string() {
         img_map.set_preload(tm.get_preload("assets/maps/map_1/background.png").unwrap());
+    } else if player_info[2] == "city".to_string() {
+        img_map.set_preload(tm.get_preload("assets/maps/map_2/citymap.png").unwrap());
     }
 
 
@@ -213,6 +225,9 @@ loop{
     }
     if btn_map_dirt.click() {
         player_info[2] = "dirt".to_string();
+    }
+    if btn_map_city.click() {
+        player_info[2] = "city".to_string();
     }
 
     if p1_ready && p2_ready && map_selected {

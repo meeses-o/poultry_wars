@@ -21,16 +21,16 @@ impl Map2 {
             mapfloor: StillImage::new("",1280.0, 960.0, 0.0, 0.0, true, 1.0).await,
             background: StillImage::new("",1280.0, 960.0, 0.0, 0.0, true, 1.0).await,
             cranechain: StillImage::new("", 20.0, 200.0, 500.0, 200.0, true, 1.0).await,
-            spawn_p1: Vec2::new(100.0, 600.0),
-            spawn_p2: Vec2::new(700.0, 600.0),
+            spawn_p1: Vec2::new(1120.0, 400.0),
+            spawn_p2: Vec2::new(160.0, 400.0),
             tm:tm,
         }
     }
 
     pub fn init(&mut self) {
         self.barplatform.set_preload(self.tm.get_preload("assets/maps/map_2/cranebar.png").unwrap());
-        self.mapfloor.set_preload(self.tm.get_preload("assets/mapfloor.png").unwrap());
-        self.background.set_preload(self.tm.get_preload("assets/map2background.png").unwrap());
+        self.mapfloor.set_preload(self.tm.get_preload("assets/maps/map_2/mapfloors.png").unwrap());
+        self.background.set_preload(self.tm.get_preload("assets/maps/map_2/citymap.png").unwrap());
         self.cranechain.set_preload(self.tm.get_preload("assets/maps/map_2/cranechain.png").unwrap());
     }
     #[allow(dead_code)]

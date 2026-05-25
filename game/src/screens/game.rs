@@ -80,7 +80,7 @@ pub async fn run(tm: &TextureManager, game_info: Vec<String>) -> bool {
         map.draw();
         p1.draw();
         p2.draw();
-
+        
         next_frame().await;
     }
 }
