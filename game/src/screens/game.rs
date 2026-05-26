@@ -81,6 +81,8 @@ pub async fn run(tm: &TextureManager, game_info: Vec<String>) -> bool {
         p1.draw();
         p2.draw();
         
+        //artificial lag for frame-independant movement testing
+        //std::thread::sleep(std::time::Duration::from_millis(33));
         next_frame().await;
     }
 }

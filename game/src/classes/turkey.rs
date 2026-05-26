@@ -75,7 +75,7 @@ impl Turkey {
 
     pub fn init(&mut self) {
         self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_r.png", self.player)).unwrap());
-        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/{}/health10.png", self.player)).unwrap());
+        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/turkey/{}/health10.png", self.player)).unwrap());
         self.stock_counter.set_preload(self.tm.get_preload("assets/health/stocks/3.png").unwrap());
     }
 
@@ -90,44 +90,42 @@ impl Turkey {
     }
 
     pub fn framemove(&mut self) {
+        let dt_scale = get_frame_time() * 166.0;
+
         let mut topspeedx = 4.5;
         if !self.dash_possible {
             topspeedx = 10.0;
         }
         let topspeedy = 5.0;
 
-        //accelleration
-        self.speed += self.accell;
+        self.speed += self.accell * dt_scale;
 
-        //topspeed limiter on the x
+        let decel = 0.5 * dt_scale;
+        if self.speed.x > decel {
+            self.speed.x -= decel;
+        } else if self.speed.x < -decel {
+            self.speed.x += decel;
+        } else {
+            self.speed.x = 0.0;
+        }
+
         if self.speed.x > topspeedx {
             self.speed.x = topspeedx;
         } else if self.speed.x < -topspeedx {
             self.speed.x = -topspeedx;
         }
 
-        //topspeed limiter on the y
         if self.speed.y > topspeedy {
             self.speed.y = topspeedy;
         }
 
-        //decelleration
-        if self.speed.x > 0.5 {
-            self.speed.x -= 0.5;
-        } else if self.speed.x < -0.5 {
-            self.speed.x += 0.5;
-        } else {
-            self.speed.x = 0.0;
-        }
-
-
-        //positional movement
-        let pos = self.view.get_pos() + self.speed;
+        let pos = self.view.get_pos() + (self.speed * dt_scale);
         self.view.set_position(pos);
     }
 
     fn move_left(&mut self) {
-        self.speed.x -= 0.6;
+        let dt_scale = get_frame_time() * 166.0;
+        self.speed.x -= 0.6 * dt_scale;
         self.side = false;
         if !self.attack {
             self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_l.png", self.player)).unwrap());
@@ -137,7 +135,8 @@ impl Turkey {
     }
 
     fn move_right(&mut self) {
-        self.speed.x += 0.6;
+        let dt_scale = get_frame_time() * 166.0;
+        self.speed.x += 0.6 * dt_scale;
         self.side = true;
         if !self.attack {
             self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_r.png", self.player)).unwrap());
@@ -145,6 +144,7 @@ impl Turkey {
             self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_r.png", self.player)).unwrap());
         }
     }
+
 
     fn jump(&mut self) {
         self.speed.y = -6.0;
@@ -202,7 +202,7 @@ impl Turkey {
         } else {
             self.health = 0;
         }
-        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/{}/health{}.png", self.player, self.health)).unwrap());
+        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/turkey/{}/health{}.png", self.player, self.health)).unwrap());
         self.stock_counter.set_preload(self.tm.get_preload(&format!("assets/health/stocks/{}.png", self.stocks)).unwrap());
     }
 
@@ -221,47 +221,49 @@ impl Turkey {
     }
 
     pub fn check_floor_at(&mut self, floordims: Vec<Vec2>) {
-        //This function works that floordims[0] is the pos
-        //and [1] is the size. for 0, x = x and y=y.
-        //for 1, x=width and y=height. don't use the actual
-        //collision module rather coordinates. 
+        let dt_scale = get_frame_time() * 166.0;
 
-        //Player dims
-        let mut play_top = self.view.get_y();
-        let mut play_bottom = self.view.get_y()+self.view.size().y;
+        // current player dims
+        let play_top = self.view.get_y();
+        let mut play_bottom = self.view.get_y() + self.view.size().y;
         let play_left = self.view.get_x();
-        let play_right = self.view.get_x()+self.view.size().x;
+        let play_right = self.view.get_x() + self.view.size().x;
 
-        //Plat dims
+        // Plat dims
         let plat_top = floordims[0].y;
-        let plat_bottom = floordims[0].y+floordims[1].y;
+        let plat_bottom = floordims[0].y + floordims[1].y;
         let plat_left = floordims[0].x;
-        let plat_right = floordims[0].x+floordims[1].x;
-        let plat_mid_y = floordims[0].y+(floordims[1].y/2.0);
-        let plat_mid_x = floordims[0].x+(floordims[1].x/2.0);
+        let plat_right = floordims[0].x + floordims[1].x;
+
+        let intersect_x = play_left < plat_right && play_right > plat_left;
+        let intersect_y = play_top < plat_bottom && play_bottom > plat_top;
 
         let mut temp_jump_possib = false;
 
-        //top/bottom of the platform
-        if play_bottom > plat_top && play_bottom < plat_mid_y && play_left < plat_right && play_right > plat_left { //top
-            self.view.set_y(plat_top-self.view.size().y);
-            temp_jump_possib = true;
-        } else if play_left < plat_right && play_right > plat_left && play_top < plat_bottom && play_top > plat_mid_y { //bott
-            self.view.set_y(plat_bottom);
-            temp_jump_possib = false;
+        if intersect_x && intersect_y {
+            //prev player pos
+            let prev_play_bottom = play_bottom - (self.speed.y * dt_scale);
+            let prev_play_top = play_top - (self.speed.y * dt_scale);
+            let prev_play_left = play_left - (self.speed.x * dt_scale);
+            let prev_play_right = play_right - (self.speed.x * dt_scale);
+
+            if prev_play_bottom <= plat_top + 0.01 { 
+                self.view.set_y(plat_top - self.view.size().y);
+                self.speed.y = 0.0;
+                temp_jump_possib = true;
+            } else if prev_play_top >= plat_bottom - 0.01 {
+                self.view.set_y(plat_bottom);
+                self.speed.y = 0.0;
+            } else if prev_play_right <= plat_left + 0.01 {
+                self.view.set_x(plat_left - self.view.size().x);
+                self.speed.x = 0.0;
+            } else if prev_play_left >= plat_right - 0.01 {
+                self.view.set_x(plat_right);
+                self.speed.x = 0.0;
+            }
         }
 
-        play_top = self.view.get_y();
-        play_bottom = self.view.get_y()+self.view.size().y;
-
-        //left/right of the platform
-        if play_bottom > plat_top && play_top < plat_bottom && play_left < plat_right && play_left > plat_mid_x { //right
-            self.view.set_x(plat_right);
-            temp_jump_possib = false;
-        } else if play_bottom > plat_top && play_top < plat_bottom && play_right > plat_left && play_right < plat_mid_x { //left
-            self.view.set_x(plat_left-self.view.size().x);
-            temp_jump_possib = false;
-        }
+        play_bottom = self.view.get_y() + self.view.size().y;
 
         if play_bottom > 960.0 {
             self.reset_pos();
