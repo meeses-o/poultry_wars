@@ -18,7 +18,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("Found {} rows:\n", rows.len());
     for row in rows {
-        println!("ID: {}", row.ID);
+        println!("ID: {}", row.id);
         println!("username: {}", row.username);
         println!("password: {}", row.password);
         println!("rank: {}", row.rank);

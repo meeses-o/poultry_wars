@@ -14,10 +14,10 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
     let mut orbit_y = 0.0;
     let center_x = 640.0;
     let center_y = 480.0;
-    let mut lbl_win_txt = String::new();
-    let mut win_img_path = String::new();
-    let mut img_background_path= String::new();
-    let mut img_trophy_path = String::new();
+    let lbl_win_txt:String;
+    let win_img_path:String;
+    let img_background_path:String;
+    let img_trophy_path:String;
     let mut user1_local = user1.clone();
     let mut user2_local = user2.clone();
     let retscreen = LoginRecord::new(0, "".to_string(), "".to_string(), "".to_string(), "".to_string());

@@ -1,9 +1,6 @@
 // Created by Cameron
 // April 28th, 2026
 // This file contains the code for the login screen
-
-use core::panic::PanicMessage;
-
 use macroquad::prelude::*;
 use serde::Deserialize;
 use crate::utils::database::{create_database_client, DatabaseTable};
@@ -93,7 +90,7 @@ pub async fn run() -> Vec<LoginRecord>{
                 lbl_message.set_text("Please enter both a username and password.".to_string());
             } else {
                 let new_record = DatabaseTable {
-                    ID: 0,
+                    id: 0,
                     username,
                     password,
                     rank: "0".to_string(),
@@ -101,8 +98,8 @@ pub async fn run() -> Vec<LoginRecord>{
                 };
 
                 match client.insert_record("poultrywars", &new_record).await {
-                    Ok(ID) => {
-                        lbl_message.set_text(format!("Account created (ID: {})", ID));
+                    Ok(id) => {
+                        lbl_message.set_text(format!("Account created (ID: {})", id));
                     }
                     Err(err) => {
                         lbl_message.set_text(format!("Failed to insert record: {}", err));
@@ -123,7 +120,7 @@ pub async fn run() -> Vec<LoginRecord>{
                 if let Ok(records) = records_err {
                     for player in &records {
                         if player.username == username && player.password == password {
-                            local_player_info.id = player.ID.clone();
+                            local_player_info.id = player.id.clone();
                             local_player_info.username = player.username.clone();
                             local_player_info.password = player.password.clone();
                             local_player_info.rank = player.rank.clone();

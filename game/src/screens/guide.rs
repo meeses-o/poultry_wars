@@ -8,7 +8,6 @@ use macroquad::prelude::*;
 // use crate::ui::grid::{ draw_grid };
 use crate::ui::label::Label;
 use crate::ui::text_button::TextButton;
-use crate::ui::still_image::StillImage;
 
 pub async fn run() -> String{
     let btn_back = TextButton::new(1150.0, 20.0, 100.0, 50.0, "Back", BLACK, BLUE, 35);

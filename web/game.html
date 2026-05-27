@@ -16,10 +16,10 @@
         }
 
         /* === MODE 2: Fixed-size centered canvas (uncomment to use) === */
-        /*
+        
         body {
             margin: 0;
-            background: black;
+            background: tan;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -27,22 +27,22 @@
         }
 
         canvas {
-            width: 1024px;
-            height: 768px;
+            width: 1280px;
+            height: 960px;
             background: black;
         }
 
         html {
             overflow: hidden;
         }
-        */
+       
             </style>
         </head>
         <body>
             <canvas id="glcanvas" tabindex='1' hidden></canvas>
             <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
             <script type="module">
-        import init, { set_wasm } from "./pkg/game.js";
+        import init, { set_wasm } from "./pkg/poultry_wars.js";
         async function impl_run() {
             let wbg = await init();
             miniquad_add_plugin({
@@ -51,7 +51,7 @@
                 version: "0.0.1",
                 name: "wbg",
             });
-            load("./pkg/game_bg.wasm");
+            load("./pkg/poultry_wars_bg.wasm");
         }
           // Auto-run when page loads
         window.addEventListener('load', function() {
