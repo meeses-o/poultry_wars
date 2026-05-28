@@ -148,7 +148,7 @@ pub async fn run() -> Vec<LoginRecord>{
             txt_password.set_text("");
         }
 
-        if guest_button.click() {
+        if guest_button.click(){
             // log in as guest1 on database, rank and money will not be counted for guests, if guest1 is already logged in, log in as guest2
             if ret_player_data.len() == 0 {
                 ret_player_data.push(LoginRecord { id: 0, username: "guest1".to_string(), password: "guest".to_string(), rank: "0".to_string(), money: "0".to_string() });

@@ -12,7 +12,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
     let mut angle: f32 = 0.0;
     let mut orbit_x = 0.0;
     let mut orbit_y = 0.0;
-    let center_x = 640.0;
+    let center_x = 590.0;
     let center_y = 480.0;
     let lbl_win_txt:String;
     let win_img_path:String;
@@ -81,7 +81,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
             return ret_vec;
         }
         img_trophy.set_angle(angle);
-        angle -= 0.001;
+        angle -= 0.005;
         img_trophy.set_position(Vec2::new(orbit_x, orbit_y));
         orbit_x = center_x + angle.cos() * radius;
         orbit_y = center_y + angle.sin() * radius;

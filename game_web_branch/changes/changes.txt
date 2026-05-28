@@ -1,0 +1,4 @@
+Always:
+
+Remove exit buttons
+Remove development shortcuts

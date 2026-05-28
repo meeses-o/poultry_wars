@@ -52,8 +52,8 @@ impl Map2 {
         let dt = get_frame_time();
         self.balloon_timer += dt;
 
-        // Reset loop every 10 seconds
-        if self.balloon_timer >= 10.0 {
+        // Reset loop every 25 seconds
+        if self.balloon_timer >= 25.0 {
             self.balloon_timer = 0.0;
             self.balloon.set_x(-100.0);
             self.balloon.set_y(592.7);
@@ -66,12 +66,12 @@ impl Map2 {
             self.balloon.set_y(self.balloon.get_y()+(-153.8 * dt * 0.25));
         }
 
-        if get_time() - self.last_bkg_time > 3.0 {
-            if self.bkg_img_counter > 6 {   //TODO: Set limit to total frames made
-                self.bkg_img_counter = 1;
-            }
-            self.background.set_preload(self.tm.get_preload(&format!("bkg_{}.png", self.bkg_img_counter)).unwrap());
-        }
+        // if get_time() - self.last_bkg_time > 3.0 {
+        //     if self.bkg_img_counter > 6 {   //TODO: Set limit to total frames made
+        //         self.bkg_img_counter = 1;
+        //     }
+        //     self.background.set_preload(self.tm.get_preload(&format!("bkg_{}.png", self.bkg_img_counter)).unwrap());
+        // }
     }
 
     pub fn draw(&self) {

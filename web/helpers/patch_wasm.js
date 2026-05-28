@@ -47,4 +47,4 @@ async function __wbg_init(module_or_path) {
 code = code.replace(/function __wbg_finalize_init[\s\S]*?(?=export \{ initSync \})/, bottomBoilerplate);
 
 fs.writeFileSync(filePath, code);
-console.log(`✅ Successfully patched ${filePath} for Macroquad/Miniquad!`);
+console.log(`Successfully patched ${filePath} for Macroquad/Miniquad!`);
