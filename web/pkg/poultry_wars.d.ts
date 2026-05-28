@@ -25,12 +25,6 @@ export interface InitOutput {
   readonly raw_mouse_move: (a: number, b: number) => void;
   readonly resize: (a: number, b: number) => void;
   readonly touch: (a: number, b: number, c: number, d: number) => void;
-  readonly wasm_bindgen__convert__closures_____invoke__h5d6131aa8403ae5d: (a: number, b: number, c: any) => void;
-  readonly wasm_bindgen__closure__destroy__h156a175ab6eeda24: (a: number, b: number) => void;
-  readonly __wbindgen_malloc: (a: number, b: number) => number;
-  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
-  readonly __wbindgen_exn_store: (a: number) => void;
-  readonly __externref_table_alloc: () => number;
   readonly __wbindgen_externrefs: WebAssembly.Table;
   readonly __wbindgen_start: () => void;
 }

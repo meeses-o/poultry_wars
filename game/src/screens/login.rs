@@ -64,11 +64,11 @@ pub async fn run() -> Vec<LoginRecord>{
     let mut lbl_p2 = Label::new("", 450.0, 110.0, 22);
     let mut ret_player_data: Vec<LoginRecord> = vec![];
 
-    let create_table_sql = "CREATE TABLE IF NOT EXISTS poultrywars (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, rank TEXT NOT NULL, money TEXT NOT NULL)";
-    if let Err(err) = client.execute_sql(create_table_sql).await {
-        lbl_message.set_text(format!("Failed to ensure user table exists: {}", err));
-        println!("Failed to ensure user table exists: {}", err);
-    }
+    // let create_table_sql = "CREATE TABLE IF NOT EXISTS poultrywars (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, rank TEXT NOT NULL, money TEXT NOT NULL)";
+    // if let Err(err) = client.execute_sql(create_table_sql).await {
+    //     lbl_message.set_text(format!("Failed to ensure user table exists: {}", err));
+    //     println!("Failed to ensure user table exists: {}", err);
+    // }
 
     loop {
         clear_background(WHITE);
@@ -116,7 +116,7 @@ pub async fn run() -> Vec<LoginRecord>{
                 lbl_message.set_text("Please enter both a username and password.".to_string());
             } else {
                 let mut local_player_info = LoginRecord::new(0, "".to_string(), "".to_string(), "".to_string(), "".to_string());
-                let records_err = client.fetch_table("poultrywars").await;
+                let records_err = client.fetch_table::<DatabaseTable>("poultrywars").await;
                 if let Ok(records) = records_err {
                     for player in &records {
                         if player.username == username && player.password == password {

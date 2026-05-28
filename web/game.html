@@ -47,25 +47,45 @@
             <button id="back"><a href="welcome.html" class="backtxt">Back</a></button>
             <canvas id="glcanvas" tabindex='1' hidden></canvas>
             <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
-            <script type="module">
-        import init, { set_wasm } from "./pkg/poultry_wars.js";
-        async function impl_run() {
-            let wbg = await init();
-            miniquad_add_plugin({
-                register_plugin: (a) => (a.wbg = wbg),
-                on_init: () => set_wasm(wasm_exports),
-                version: "0.0.1",
-                name: "wbg",
+        <script type="module">
+            import init, { set_wasm } from "./pkg/poultry_wars.js";
+            import * as dbBridge from "./pkg/db_bridge.js";
+
+            async function impl_run() {
+                let wbg = await init();
+
+                // Inject db bridge functions into Miniquad's import object
+                // BEFORE load() is called — this is what actually gets used at instantiation
+                importObject.env.mq_db_query = (ptr, len, url_ptr, url_len) =>
+                    dbBridge.mq_db_query(ptr, len, url_ptr, url_len);
+                importObject.env.mq_db_query_result_len = () =>
+                    dbBridge.mq_db_query_result_len();
+                importObject.env.mq_db_query_fill_result = (ptr) =>
+                    dbBridge.mq_db_query_fill_result(ptr);
+                importObject.env.mq_db_query_clear_result = () =>
+                    dbBridge.mq_db_query_clear_result();
+
+                miniquad_add_plugin({
+                    register_plugin: (a) => (a.wbg = wbg),
+                    on_init: () => {
+                        set_wasm(wasm_exports);
+                        window.__wasm_instance = { exports: wasm_exports };
+                    },
+                    version: "0.0.1",
+                    name: "wbg",
+                });
+
+                window.__db_bridge = dbBridge;
+
+                load("./pkg/poultry_wars_bg.wasm");
+            }
+
+            window.addEventListener('load', function() {
+                document.getElementById("glcanvas").removeAttribute("hidden");
+                document.getElementById("glcanvas").focus();
+                impl_run();
             });
-            load("./pkg/poultry_wars_bg.wasm");
-        }
-          // Auto-run when page loads
-        window.addEventListener('load', function() {
-            document.getElementById("glcanvas").removeAttribute("hidden");
-            document.getElementById("glcanvas").focus();
-            impl_run();
-        });
-    </script>
+        </script>
         </body>
         </html>
         

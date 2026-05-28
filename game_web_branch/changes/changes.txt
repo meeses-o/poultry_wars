@@ -2,3 +2,4 @@ Always:
 
 Remove exit buttons
 Remove development shortcuts
+add "unsafe" to the extern "C" {} call in database.rs

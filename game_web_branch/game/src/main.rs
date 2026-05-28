@@ -14,6 +14,7 @@ use macroquad::prelude::*;
 use crate::screens::login::LoginRecord;
 use crate::utils::preload_image::TextureManager;
 use crate::utils::update_player_dbs::update_player_dbs;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 
 
@@ -152,3 +153,6 @@ let all_assets = vec![
         next_frame().await;
     }
 }
+
+#[wasm_bindgen]
+extern "C" {}
