@@ -8,9 +8,10 @@ use macroquad::prelude::*;
 // use crate::ui::grid::{ draw_grid };
 use crate::ui::label::Label;
 use crate::ui::text_button::TextButton;
-use crate::utils::virtual_screen::VirtualScreen;
+use crate::utils::scale::use_virtual_resolution;
 
-pub async fn run(vm: &VirtualScreen) -> String{
+
+pub async fn run() -> String{
     let btn_back = TextButton::new(1150.0, 20.0, 100.0, 50.0, "Back", BLACK, BLUE, 35);
      let mut lbl_guide = Label::new(
         "                Greeting and Salutations dear players!
@@ -34,15 +35,14 @@ Your Rank,Username,Password",
     lbl_movement.with_colors(BLACK, Some(LIGHTGRAY));
 
 loop{
-    vm.begin_frame();
+    use_virtual_resolution(1280.0, 960.0);
     clear_background(BEIGE);
     // draw_grid(50.0, BLACK);
     lbl_guide.draw();
     lbl_movement.draw();
-    if btn_back.click(&vm){
+    if btn_back.click(){
         return "welcome".to_string();
     }
-    vm.end_frame();
     next_frame().await;
 }
 }

@@ -25,8 +25,8 @@ impl Map2 {
     pub async fn new(tm: TextureManager) -> Self {
         Map2 {
             barplatform: StillImage::new("", 150.0, 15.0, 579.5, 580.0, true, 1.0).await,
-            leftfloor: StillImage::new("", 459.0, 290.0, 1.0, 690.0, true, 1.0).await,
-            rightfloor: StillImage::new("", 388.0, 290.0, 900.0, 690.0, true, 1.0).await,
+            leftfloor: StillImage::new("", 459.0, 260.0, 1.0, 690.0, true, 1.0).await,
+            rightfloor: StillImage::new("", 370.0, 260.0, 900.0, 690.0, true, 1.0).await,
             background: StillImage::new("", 1280.0, 960.0, 0.0, 0.0, true, 1.0).await,
             cranechain: StillImage::new("", 15.0, 198.0, 650.0, 385.0, true, 1.0).await,
             balloon: StillImage::new("", 100.0, 120.0, -100.0, 592.7, true, 1.0).await,

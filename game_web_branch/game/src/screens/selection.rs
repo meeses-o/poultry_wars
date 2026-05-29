@@ -8,9 +8,10 @@ use crate::ui::text_button::TextButton;
 use crate::ui::label::Label;
 use crate::ui::still_image::StillImage;
 use crate::utils::preload_image::TextureManager;
-use crate::utils::virtual_screen::VirtualScreen;
+use crate::utils::scale::use_virtual_resolution;
 
-pub async fn run(tm: &TextureManager, p1_user: &String, p2_user: &String, vm: &VirtualScreen) -> Vec<String> {
+
+pub async fn run(tm: &TextureManager, p1_user: &String, p2_user: &String) -> Vec<String> {
     let mut p1_ready = false;
     let mut p2_ready = false;
     let mut map_selected = false;
@@ -138,7 +139,7 @@ pub async fn run(tm: &TextureManager, p1_user: &String, p2_user: &String, vm: &V
     
 
 loop{
-    vm.begin_frame();
+    use_virtual_resolution(1280.0, 960.0);
     clear_background(BEIGE);
     draw_line(400.0, 100.0, 400.0, 500.0, 4.0, BLACK);
     draw_line(750.0, 100.0, 750.0, 500.0, 4.0, BLACK);
@@ -178,7 +179,7 @@ loop{
         img_map.set_preload(tm.get_preload("assets/maps/map_2/citymap.png").unwrap());
     }
 
-    if btn_p1_rdy.click(&vm) {
+    if btn_p1_rdy.click() {
         if player_info[0] != "u".to_string() {
             if p1_ready {
             p1_ready = false;
@@ -188,7 +189,7 @@ loop{
         }
     }
 
-    if btn_p2_rdy.click(&vm) {
+    if btn_p2_rdy.click() {
         if player_info[1] != "u".to_string() {
             if p2_ready {
                 p2_ready = false;
@@ -198,7 +199,7 @@ loop{
         }
     }
 
-    if btn_map_select.click(&vm) {
+    if btn_map_select.click() {
         if player_info[2] != "u".to_string() {
             if map_selected {
                 map_selected = false;
@@ -208,31 +209,30 @@ loop{
         }
     }
    
-    if btn_class_chicken_1.click(&vm) {
+    if btn_class_chicken_1.click() {
         player_info[0] = "chicken".to_string();
     }
-    if btn_class_turkey_1.click(&vm) {
+    if btn_class_turkey_1.click() {
         player_info[0] = "turkey".to_string();
     }
-    if btn_class_chicken_2.click(&vm) {
+    if btn_class_chicken_2.click() {
         player_info[1] = "chicken".to_string();
     }
-    if btn_class_turkey_2.click(&vm) {
+    if btn_class_turkey_2.click() {
         player_info[1] = "turkey".to_string();
     }
-    if btn_map_dirt.click(&vm) {
+    if btn_map_dirt.click() {
         player_info[2] = "dirt".to_string();
     }
-    if btn_map_city.click(&vm) {
+    if btn_map_city.click() {
         player_info[2] = "city".to_string();
     }
 
     if p1_ready && p2_ready && map_selected {
-        if btn_start.click(&vm) {
+        if btn_start.click() {
             return player_info;
         }
     }
-    vm.end_frame();
     next_frame().await;
 }
 

@@ -15,7 +15,6 @@ use crate::screens::login::LoginRecord;
 use crate::utils::preload_image::TextureManager;
 use crate::utils::update_player_dbs::update_player_dbs;
 use wasm_bindgen::prelude::wasm_bindgen;
-use crate::utils::virtual_screen::VirtualScreen;
 
 
 
@@ -36,7 +35,6 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let tm = TextureManager::new();
-    let vs = VirtualScreen::new();
 let all_assets = vec![
         "assets/class_images/chicken/p1/death.png",
         "assets/class_images/chicken/p1/attack_l.png",
@@ -128,18 +126,18 @@ let all_assets = vec![
     tm.preload_with_loading_screen(&all_assets, None).await;
 
 
-    let mut player_info: Vec<LoginRecord> = screens::login::run(&vm).await;
+    let mut player_info: Vec<LoginRecord> = screens::login::run().await;
     let mut last_switch = get_time() - 0.02;
     let mut current_screen = "welcome".to_string();
     loop {
         if get_time() - last_switch > 0.01 {
             current_screen = match current_screen.as_str() {
-                "welcome" => screens::welcome::run(&tm, &vm).await,
-                "guide" => screens::guide::run(&vm).await,
+                "welcome" => screens::welcome::run(&tm).await,
+                "guide" => screens::guide::run().await,
                 "game" => {
-                    let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username, &vm).await;
-                    let winner = screens::game::run(&tm, game_info, &vm).await;
-                    let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner, &vm).await;
+                    let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await;
+                    let winner = screens::game::run(&tm, game_info).await;
+                    let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner).await;
                     player_info[0] = retscreen[0].clone();
                     player_info[1] = retscreen[1].clone();
                     let res = update_player_dbs(vec![player_info[0].clone(), player_info[1].clone()]).await;
