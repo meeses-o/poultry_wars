@@ -1,0 +1,97 @@
+
+        <html lang="en">
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <link rel="icon" type="image/png" href="web_assets/favicon.png">
+            <title>Poultry Wars</title>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Eagle+Lake&family=Jacquard+24&display=swap');
+                body {
+                    margin: 0;
+                    background: tan;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    width: 100vw;
+                    overflow: hidden;
+                }
+
+                canvas {
+                    width: 100vw;
+                    height: 100vh;
+
+                    max-width: calc(100vh * (4/3));
+                    max-height: calc(100vw * (3/4));
+                    
+                    background: black;
+                }
+
+                html {
+                    overflow: hidden;
+                }
+                
+                button {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 5%;
+                    height: 5%;
+                    background-color: antiquewhite;
+                    font-family: "Jacquard 24", serif;
+                }
+
+                .backtxt {
+                    color: black;
+                    text-decoration: none;
+                    font-size: 200%;
+                }
+            </style>
+        </head>
+        <body>
+            <button id="back"><a href="welcome.html" class="backtxt">Back</a></button>
+            <canvas id="glcanvas" width="1280" height="960" tabindex="1" hidden></canvas>
+            <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
+            <script type="module">
+                import init, { set_wasm } from "./pkg/poultry_wars.js";
+                import * as dbBridge from "./pkg/db_bridge.js";
+
+                async function impl_run() {
+                    let wbg = await init();
+
+                    // Inject db bridge functions into Miniquad's import object
+                    // BEFORE load() is called — this is what actually gets used at instantiation
+                    importObject.env.mq_db_query = (ptr, len, url_ptr, url_len) =>
+                        dbBridge.mq_db_query(ptr, len, url_ptr, url_len);
+                    importObject.env.mq_db_query_result_len = () =>
+                        dbBridge.mq_db_query_result_len();
+                    importObject.env.mq_db_query_fill_result = (ptr) =>
+                        dbBridge.mq_db_query_fill_result(ptr);
+                    importObject.env.mq_db_query_clear_result = () =>
+                        dbBridge.mq_db_query_clear_result();
+
+                    miniquad_add_plugin({
+                        register_plugin: (a) => (a.wbg = wbg),
+                        on_init: () => {
+                            set_wasm(wasm_exports);
+                            window.__wasm_instance = { exports: wasm_exports };
+                        },
+                        version: "0.0.1",
+                        name: "wbg",
+                    });
+
+                    window.__db_bridge = dbBridge;
+
+                    load("./pkg/poultry_wars_bg.wasm");
+                }
+
+                window.addEventListener('load', function() {
+                    document.getElementById("glcanvas").removeAttribute("hidden");
+                    document.getElementById("glcanvas").focus();
+                    impl_run();
+                });
+            </script>
+        </body>
+        </html>
+        

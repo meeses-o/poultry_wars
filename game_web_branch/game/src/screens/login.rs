@@ -7,6 +7,7 @@ use crate::utils::database::{create_database_client, DatabaseTable};
 use crate::ui::text_button::TextButton;
 use crate::ui::text_input::TextInput;
 use crate::ui::label::Label;
+use crate::utils::virtual_screen::VirtualScreen;
 
 #[derive(Debug, Deserialize)]
 #[derive(Clone)]
@@ -18,7 +19,7 @@ pub struct LoginRecord {
     pub money: String
 }
 impl LoginRecord {
-    pub fn new(id: i32, username: String, password: String, rank: String, money: String) -> Self {
+    pub fn new(id: i32, username: String, password: String, rank: String, money: String, vm: &VirtualScreen) -> Self {
         LoginRecord { id: id, username: username, password: password, rank: rank, money: money }
     }
  }
@@ -71,10 +72,11 @@ pub async fn run() -> Vec<LoginRecord>{
     // }
 
     loop {
+        vm.begin_frame();
         clear_background(WHITE);
 
-        txt_username.draw();
-        txt_password.draw();
+        txt_username.draw(&vm);
+        txt_password.draw(&vm);
         usernamelabel.draw();
         passwordlabel.draw();
         lbl_message.draw();
@@ -82,7 +84,7 @@ pub async fn run() -> Vec<LoginRecord>{
         lbl_p2.draw();
 
         // Check for button click
-        if create_button.click() {
+        if create_button.click(&vm) {
             let username = txt_username.get_text();
             let password = txt_password.get_text();
 
@@ -108,7 +110,7 @@ pub async fn run() -> Vec<LoginRecord>{
             }
         }
 
-        if login_button.click() {
+        if login_button.click(&vm) {
             let username = txt_username.get_text();
             let password = txt_password.get_text();
 
@@ -148,7 +150,7 @@ pub async fn run() -> Vec<LoginRecord>{
             txt_password.set_text("");
         }
 
-        if guest_button.click() {
+        if guest_button.click(&vm) {
             // log in as guest1 on database, rank and money will not be counted for guests, if guest1 is already logged in, log in as guest2
             if ret_player_data.len() == 0 {
                 ret_player_data.push(LoginRecord { id: 0, username: "guest1".to_string(), password: "guest".to_string(), rank: "0".to_string(), money: "0".to_string() });
@@ -173,7 +175,7 @@ pub async fn run() -> Vec<LoginRecord>{
             }
             None => {}
         }
-
+        vm.end_frame();
         next_frame().await
     }
 }

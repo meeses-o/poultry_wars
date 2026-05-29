@@ -93,6 +93,7 @@ Then in the main loop you would use:
 
 #[cfg(feature = "scale")]
 use crate::utils::scale::mouse_position_world as mouse_position;
+use crate::utils::virtual_screen::VirtualScreen;
 use macroquad::prelude::*;
 
 #[cfg(target_arch = "wasm32")]
@@ -771,8 +772,8 @@ impl TextInput {
 
     // Primary method - both updates and draws the textbox
     #[allow(unused)]
-    pub fn draw(&mut self) {
-        self.update_internal();
+    pub fn draw(&mut self, vm: &&VirtualScreen) {
+        self.update_internal(&vm);
         self.draw_internal();
     }
 
@@ -784,12 +785,12 @@ impl TextInput {
 
     // For cases when only updating is needed without drawing
     #[allow(unused)]
-    pub fn update_only(&mut self) {
-        self.update_internal();
+    pub fn update_only(&mut self, vm: &&VirtualScreen) {
+        self.update_internal(&vm);
     }
 
     // Now private - internal implementation only
-    fn update_internal(&mut self) {
+    fn update_internal(&mut self, vm: &&&VirtualScreen) {
         // Skip all interaction if disabled
         if !self.enabled {
             self.active = false;
@@ -800,7 +801,7 @@ impl TextInput {
         }
 
         if is_mouse_button_pressed(MouseButton::Left) {
-            let (mx, my) = mouse_position();
+            let (mx, my) = vm.mouse_position();
             self.active = mx >= self.x && mx <= self.x + self.width && my >= self.y && my <= self.y + self.height;
 
             if self.active {
@@ -820,7 +821,7 @@ impl TextInput {
         }
 
         if self.active && self.is_dragging_selection && is_mouse_button_down(MouseButton::Left) {
-            let (mx, my) = mouse_position();
+            let (mx, my) = vm.mouse_position();
             let text_x = self.x + 5.0;
             let text_y = self.y + 5.0;
             self.cursor_index = self.index_from_local_point(mx - text_x, my - text_y);

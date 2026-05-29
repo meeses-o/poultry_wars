@@ -6,9 +6,10 @@ use crate::utils::preload_image::TextureManager;
 use crate::screens::login::LoginRecord;
 use crate::utils::rank_calculator::calc_rank;
 use crate::ui::grid::draw_grid;
+use crate::utils::virtual_screen::VirtualScreen;
 
 //winner = 1; p1, etc.
-pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, winner: bool) -> Vec<LoginRecord> {
+pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, winner: bool, vm: &VirtualScreen) -> Vec<LoginRecord> {
     let radius: f32 = 300.0;
     let mut angle: f32 = 0.0;
     let mut orbit_x = 0.0;
@@ -63,8 +64,9 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
     );
 
     loop {
+        vm.begin_frame();
         img_background.draw();
-        if btn_playagain.click(){
+        if btn_playagain.click(&vm){
             ret_vec[2].username = "game".to_string();
             return ret_vec;
         }
@@ -76,6 +78,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
         lbl_winner.draw();
         win_img.draw();
         img_trophy.draw();
+        vm.end_frame();
         next_frame().await
     }
 }

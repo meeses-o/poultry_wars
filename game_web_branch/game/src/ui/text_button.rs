@@ -63,7 +63,7 @@ only the text area is clickable, not the entire button area.
 */
 use macroquad::prelude::*;
 #[cfg(feature = "scale")]
-use crate::modules::scale::mouse_position_world as mouse_position;
+use crate::utils::virtual_screen::VirtualScreen;
 
 // Custom struct for ButtonText
 pub struct TextButton {
@@ -252,12 +252,12 @@ impl TextButton {
         self
     }
 
-    pub fn click(&self) -> bool {
+    pub fn click(&self, vm: &&VirtualScreen) -> bool {
         if !self.visible {
             return false; // If not visible, don't process clicks
         }
         // Get mouse position
-        let (mouse_x, mouse_y) = mouse_position();
+        let (mouse_x, mouse_y) = vm.mouse_position();
         let mouse_pos = Vec2::new(mouse_x, mouse_y);
 
         // Check if the background is transparent (alpha is 0)

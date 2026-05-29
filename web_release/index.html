@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="web_assets/favicon.png">
+    <title>Poultry Wars</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Ensures the div takes up the full screen height for centering */
+        }
+        
+        .top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0px;
+        }
+
+        /* Removing default margins brings the h1 and h2 closer together */
+        .top h1, .top h2 {
+            margin: 0;
+            gap: 3rem;
+        }
+
+        .bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        h1 {
+            color: white;
+            font-size: 10rem;
+        }
+
+        h2 {
+            color: white;
+            font-size: 2rem;
+        }
+
+        p {
+            color: white;
+        }
+
+        button {
+            /* Removing fixed width/height lets it hug the text */
+            background-color: white;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        button a {
+            display: block;
+            color: black; /* Matches body background for the negative effect */
+            text-decoration: none;
+            font-weight: 900; /* Replaced invalid 'font-style: bold' */
+            font-size: 4rem;
+            text-transform: uppercase;
+            
+            padding: 0;
+            margin: 0;
+            line-height: 0.65;
+        }
+        
+        /* Optional hover effect */
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="top">
+            <h1>Poultry Wars</h1>
+            <h2>Epilepsy Warning</h2>
+        </div>
+        <div class="bottom">
+            <p>This page and game contain flashing lights that may not be safe for viewers with epilepsy</p>
+            <button><a href="welcome.html">Proceed to Game</a></button>
+        </div>
+    </div>
+</body>
+</html>

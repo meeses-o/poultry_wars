@@ -6,8 +6,9 @@ use macroquad::prelude::*;
 use crate::ui::text_button::TextButton;
 use crate::ui::still_image::StillImage;
 use crate::utils::preload_image::TextureManager;
+use crate::utils::virtual_screen::VirtualScreen;
 
-pub async fn run(tm: &TextureManager) -> String{
+pub async fn run(tm: &TextureManager, vm: &VirtualScreen) -> String{
     let btn_game = TextButton::new(
         430.0,
         600.0,
@@ -35,16 +36,18 @@ pub async fn run(tm: &TextureManager) -> String{
     img_bkg.set_preload(tm.get_preload("assets/welcome_screen/mainscreenbg.png").unwrap());
 
     loop {
+        vm.begin_frame();
         clear_background(BEIGE);
         img_bkg.draw();
         img_logo.draw();
-        if btn_game.click() {
+        if btn_game.click(&vm) {
             return "game".to_string();
         }
-        if btn_guide.click() {
+        if btn_guide.click(&vm) {
             return "guide".to_string();
         }
         img_logo.set_zoom(((1.0*get_time().sin())+9.0) as f32);
+        vm.end_frame();
         next_frame().await
     }
 }
