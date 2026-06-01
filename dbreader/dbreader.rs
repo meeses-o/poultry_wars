@@ -8,23 +8,25 @@ use std::error::Error;
 async fn main() -> Result<(), Box<dyn Error>> {
     let client = create_database_client();
 
-    println!("Reading full poultrywars table from the database...");
+    // println!("Reading full poultrywars table from the database...");
 
-    let rows: Vec<DatabaseTable> = client.fetch_table("poultrywars").await?;
-    if rows.is_empty() {
-        println!("No rows found in poultrywars.");
-        return Ok(());
-    }
+    // let rows: Vec<DatabaseTable> = client.fetch_table("poultrywars").await?;
+    // if rows.is_empty() {
+    //     println!("No rows found in poultrywars.");
+    //     return Ok(());
+    // }
 
-    println!("Found {} rows:\n", rows.len());
-    for row in rows {
-        println!("ID: {}", row.id);
-        println!("username: {}", row.username);
-        println!("password: {}", row.password);
-        println!("rank: {}", row.rank);
-        println!("money: {}", row.money);
-        println!("---");
-    }
+    // println!("Found {} rows:\n", rows.len());
+    // for row in rows {
+    //     println!("ID: {}", row.id);
+    //     println!("username: {}", row.username);
+    //     println!("password: {}", row.password);
+    //     println!("rank: {}", row.rank);
+    //     println!("money: {}", row.money);
+    //     println!("---");
+    // }
+
+    client.execute_sql("ALTER TABLE poultrywars RENAME COLUMN ID TO id;").await?;
 
     Ok(())
 }

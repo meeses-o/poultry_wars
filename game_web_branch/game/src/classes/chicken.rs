@@ -17,10 +17,10 @@ pub struct Chicken{
     accell: Vec2,               //Current accellerations in the x and y
     jump_posib: bool,
     start_pos: Vec2,
-    attack: bool,
+    attack: bool,               //true while animation is playing
     last_attack_time: f64,
     side: bool,                 //left = false, right = true
-    attack_clock: bool,
+    attack_clock: bool,         //true for 1 frame
     attack_cooldown: f32,
     slam: bool,
 }
@@ -245,6 +245,7 @@ impl Chicken {
                 temp_jump_possib = true;
             } else if prev_play_top >= plat_bottom - 0.01 {
                 self.view.set_y(plat_bottom);
+                
                 self.speed.y = 0.0;
             } else if prev_play_right <= plat_left + 0.01 {
                 self.view.set_x(plat_left - self.view.size().x);
