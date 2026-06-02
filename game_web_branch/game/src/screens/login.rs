@@ -92,20 +92,33 @@ pub async fn run() -> Vec<LoginRecord>{
             if username.is_empty() || password.is_empty() {
                 lbl_message.set_text("Please enter both a username and password.".to_string());
             } else {
-                let new_record = DatabaseTable {
-                    id: 0,
-                    username,
-                    password,
-                    rank: "0".to_string(),
-                    money: "0".to_string(),
-                };
-
-                match client.insert_record("poultrywars", &new_record).await {
-                    Ok(id) => {
-                        lbl_message.set_text(format!("Account created (ID: {})", id));
+                let records_err = client.fetch_table::<DatabaseTable>("poultrywars").await;
+                let mut match_found = false;
+                if let Ok(records) = records_err {
+                    for player in &records {
+                        if player.username == username && player.password == password {
+                            match_found = true;
+                        }
                     }
-                    Err(err) => {
-                        lbl_message.set_text(format!("Failed to insert record: {}", err));
+                    if !match_found {
+                        let new_record = DatabaseTable {
+                            id: 0,
+                            username,
+                            password,
+                            rank: "0".to_string(),
+                            money: "0".to_string(),
+                        };
+
+                        match client.insert_record("poultrywars", &new_record).await {
+                            Ok(id) => {
+                                lbl_message.set_text(format!("Account created (ID: {})", id));
+                            }
+                            Err(err) => {
+                                lbl_message.set_text(format!("Failed to insert record: {}", err));
+                            }
+                        }
+                    } else {
+                        lbl_message.set_text("Account already exists");
                     }
                 }
             }

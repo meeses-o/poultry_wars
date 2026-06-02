@@ -23,6 +23,20 @@ impl PlayerType {
         }
     }
 
+    pub fn hit_animate(&mut self, op_side: bool) {
+        match self {
+            PlayerType::Chicken(c) => c.hit_animate(op_side),
+            PlayerType::Turkey(t) => t.hit_animate(op_side),
+        }
+    }
+
+    pub fn get_side(&mut self) -> bool{
+        match self {
+            PlayerType::Chicken(c) => c.get_side(),
+            PlayerType::Turkey(t) => t.get_side()
+        }
+    }
+
     pub fn automove(&mut self) {
         match self {
             PlayerType::Chicken(c) => c.automove(),

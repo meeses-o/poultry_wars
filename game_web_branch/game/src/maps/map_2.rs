@@ -43,7 +43,7 @@ impl Map2 {
         self.barplatform.set_preload(self.tm.get_preload("assets/maps/map_2/cranebar.png").unwrap());
         self.leftfloor.set_preload(self.tm.get_preload("assets/maps/map_2/left_floor.png").unwrap());
         self.rightfloor.set_preload(self.tm.get_preload("assets/maps/map_2/right_floor.png").unwrap());
-        self.background.set_preload(self.tm.get_preload("assets/maps/map_2/citymap.png").unwrap());
+        self.background.set_preload(self.tm.get_preload("assets/maps/map_2/citymap1.png").unwrap());
         self.cranechain.set_preload(self.tm.get_preload("assets/maps/map_2/cranechain.png").unwrap());
         self.balloon.set_preload(self.tm.get_preload("assets/maps/map_2/airballoon.png").unwrap());
     }
@@ -66,12 +66,15 @@ impl Map2 {
             self.balloon.set_y(self.balloon.get_y()+(-153.8 * dt * 0.25));
         }
 
-        // if get_time() - self.last_bkg_time > 3.0 {
-        //     if self.bkg_img_counter > 6 {   //TODO: Set limit to total frames made
-        //         self.bkg_img_counter = 1;
-        //     }
-        //     self.background.set_preload(self.tm.get_preload(&format!("bkg_{}.png", self.bkg_img_counter)).unwrap());
-        // }
+        if get_time() - self.last_bkg_time > 0.4 {
+            self.last_bkg_time = get_time();
+            if self.bkg_img_counter > 12 {   //TODO: Set limit to total frames made
+                self.bkg_img_counter = 1;
+            } else {
+                self.bkg_img_counter += 1;
+            }
+            self.background.set_preload(self.tm.get_preload(&format!("assets/maps/map_2/citymap{}.png", self.bkg_img_counter)).unwrap());
+        }
     }
 
     pub fn draw(&self) {

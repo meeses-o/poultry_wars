@@ -176,7 +176,7 @@ loop{
     if player_info[2] == "dirt".to_string() {
         img_map.set_preload(tm.get_preload("assets/maps/map_1/background.png").unwrap());
     } else if player_info[2] == "city".to_string() {
-        img_map.set_preload(tm.get_preload("assets/maps/map_2/citymap.png").unwrap());
+        img_map.set_preload(tm.get_preload("assets/maps/map_2/citymap1.png").unwrap());
     }
 
     if btn_p1_rdy.click() {

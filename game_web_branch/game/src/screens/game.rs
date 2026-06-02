@@ -66,11 +66,13 @@ pub async fn run(tm: &TextureManager, game_info: Vec<String>) -> bool {
         if p1.get_attack_state() {
             if check_collision(p1.get_view(), p2.get_view(), 5) {
                 p2.allpurpose_hurt(p1.get_attack_dmg());
+                p2.hit_animate(p1.get_side());
             }
         }
         if p2.get_attack_state() {
             if check_collision(p1.get_view(), p2.get_view(), 5) {
                 p1.allpurpose_hurt(p2.get_attack_dmg());
+                p1.hit_animate(p2.get_side());
             }
         }
 

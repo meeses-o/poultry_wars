@@ -1,0 +1,7 @@
+if hit {
+    if get_time() - self.hit_since < 2.0 {
+        draw
+    } else {
+        hit = false
+    }
+}

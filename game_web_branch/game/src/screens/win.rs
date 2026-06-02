@@ -8,7 +8,7 @@ use crate::utils::rank_calculator::calc_rank;
 use crate::ui::grid::draw_grid;
 
 //winner = 1; p1, etc.
-pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, winner: bool) -> Vec<LoginRecord> {
+pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, winner: bool, p1_class: String, p2_class: String) -> Vec<LoginRecord> {
     let radius: f32 = 300.0;
     let mut angle: f32 = 0.0;
     let mut orbit_x = 0.0;
@@ -26,7 +26,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
     img_background_path = "assets/win_screen/winscreen.png".to_string();
     if winner {
         lbl_win_txt = format!("{} WINS", user1_local.username);
-        win_img_path = "assets/class_images/chicken/p1/idle_r.png".to_string();
+        win_img_path = format!("assets/class_images/{}/p1/idle_r.png", p1_class);
         let rank = user1_local.rank.parse::<i32>().unwrap() + 1;
         user1_local.rank = format!("{}", rank);
         let money = user1_local.money.parse::<i32>().unwrap() + 50;
@@ -34,7 +34,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
         img_trophy_path = format!("assets/rank_images/{}.png", calc_rank(&user1_local.rank))
     } else {
         lbl_win_txt = format!("{} WINS", user2_local.username);
-        win_img_path = "assets/class_images/chicken/p2/idle_r.png".to_string();
+        win_img_path = format!("assets/class_images/{}/p2/idle_r.png", p2_class);
         let rank = user2_local.rank.parse::<i32>().unwrap() + 1;
         user2_local.rank = format!("{}", rank);
         let money = user2_local.money.parse::<i32>().unwrap() + 50;

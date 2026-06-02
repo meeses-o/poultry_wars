@@ -24,6 +24,9 @@ pub struct Turkey{
     attack_cooldown: f32,
     last_dash_time: f64,
     dash_possible: bool,
+    hit: bool,
+    hit_since: f64,
+    hitmarker: StillImage
 }
 
 impl Turkey {
@@ -48,6 +51,9 @@ impl Turkey {
                 attack_cooldown: 1.0,
                 last_dash_time: 0.0,
                 dash_possible: true,
+                hit: false,
+                hit_since: 0.0,
+                hitmarker: StillImage::new("", 100.0, 100.0, 0.0, 0.0, true, 1.0).await
             }  
         } else {
             Turkey {
@@ -69,6 +75,9 @@ impl Turkey {
                 attack_cooldown: 1.0,
                 last_dash_time: 0.0,
                 dash_possible: true,
+                hit: false,
+                hit_since: 0.0,
+                hitmarker: StillImage::new("", 100.0, 100.0, 0.0, 0.0, true, 1.0).await
             }
         }
     }
@@ -82,6 +91,7 @@ impl Turkey {
     pub fn draw(&self) {
         self.health_bar.draw();
         self.stock_counter.draw();
+        self.hitmarker.draw();
         self.view.draw();
     }
 
@@ -119,8 +129,19 @@ impl Turkey {
             self.speed.y = topspeedy;
         }
 
-        let pos = self.view.get_pos() + (self.speed * dt_scale);
+        let mut pos = self.view.get_pos() + (self.speed * dt_scale);
         self.view.set_position(pos);
+
+        if self.hit {
+            if get_time() - self.hit_since > 2.0 {
+                pos.x -= 25.0;
+                self.hitmarker.set_position(pos);
+                self.hitmarker.set_preload(self.tm.get_preload(("assets/extra_effects/hit_effect.png")).unwrap());
+            } else{
+                self.hit = false;
+                self.hitmarker.set_preload(self.tm.get_preload(("")).unwrap());
+            }
+        }
     }
 
     fn move_left(&mut self) {
@@ -145,6 +166,19 @@ impl Turkey {
         }
     }
 
+    pub fn hit_animate(&mut self, op_side: bool) {
+        self.hit = true;
+        self.hit_since = get_time();
+        if op_side {
+            self.speed.x += 4.0;
+        } else {
+            self.speed.x -= 4.0;
+        }
+    }
+
+    pub fn get_side(&self) -> bool {
+        self.side
+    }
 
     fn jump(&mut self) {
         self.speed.y = -6.0;
@@ -303,7 +337,6 @@ impl Turkey {
 
             if is_key_down(KeyCode::Space) {
                 self.attack();
-                keypress = true;
             }
 
             if is_key_down(KeyCode::S) {
@@ -334,7 +367,6 @@ impl Turkey {
 
             if is_key_down(KeyCode::M) {
                 self.attack();
-                keypress = true;
             }
 
             if is_key_down(KeyCode::Down) {

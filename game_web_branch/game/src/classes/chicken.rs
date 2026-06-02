@@ -23,6 +23,9 @@ pub struct Chicken{
     attack_clock: bool,         //true for 1 frame
     attack_cooldown: f32,
     slam: bool,
+    hit: bool,
+    hit_since: f64,
+    hitmarker: StillImage
 }
 
 impl Chicken {
@@ -46,6 +49,9 @@ impl Chicken {
                 attack_clock: false,
                 attack_cooldown: 0.5,
                 slam: false,
+                hit: false,
+                hit_since: 0.0,
+                hitmarker: StillImage::new("", 100.0, 100.0, 0.0, 0.0, true, 1.0).await
             }  
         } else {
             Chicken {
@@ -66,6 +72,9 @@ impl Chicken {
                 attack_clock: false,
                 attack_cooldown: 0.5,
                 slam: false,
+                hit: false,
+                hit_since: 0.0,
+                hitmarker: StillImage::new("", 100.0, 100.0, 0.0, 0.0, true, 1.0).await
             }
         }
     }
@@ -79,6 +88,7 @@ impl Chicken {
     pub fn draw(&self) {
         self.health_bar.draw();
         self.stock_counter.draw();
+        self.hitmarker.draw();
         self.view.draw();
     }
 
@@ -117,8 +127,18 @@ impl Chicken {
             self.speed.y = topspeedy;
         }
 
-        let pos = self.view.get_pos() + (self.speed * dt_scale);
+        let mut pos = self.view.get_pos() + (self.speed * dt_scale);
         self.view.set_position(pos);
+        if self.hit {
+            if get_time() - self.hit_since > 2.0 {
+                pos.x -= 25.0;
+                self.hitmarker.set_position(pos);
+                self.hitmarker.set_preload(self.tm.get_preload(("assets/extra_effects/hit_effect.png")).unwrap());
+            } else{
+                self.hit = false;
+                self.hitmarker.set_preload(self.tm.get_preload(("")).unwrap());
+            }
+        }
     }
 
     fn move_left(&mut self) {
@@ -141,6 +161,19 @@ impl Chicken {
         } else {
             self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).unwrap());
         }
+    }
+    pub fn hit_animate(&mut self, op_side: bool) {
+        self.hit = true;
+        self.hit_since = get_time();
+        if op_side {
+            self.speed.x += 4.0;
+        } else {
+            self.speed.x -= 4.0;
+        }
+    }
+    
+    pub fn get_side(&self) -> bool {
+        self.side
     }
 
     fn jump(&mut self) {
@@ -295,7 +328,6 @@ impl Chicken {
 
             if is_key_down(KeyCode::Space) {
                 self.attack();
-                keypress = true;
             }
 
             if is_key_down(KeyCode::S) && !self.slam{
@@ -331,7 +363,6 @@ impl Chicken {
 
             if is_key_down(KeyCode::M) {
                 self.attack();
-                keypress = true;
             }
 
             if !keypress {

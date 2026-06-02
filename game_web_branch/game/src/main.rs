@@ -36,29 +36,26 @@ fn window_conf() -> Conf {
 async fn main() {
     let tm = TextureManager::new();
 let all_assets = vec![
-        "assets/class_images/chicken/p1/death.png",
         "assets/class_images/chicken/p1/attack_l.png",
         "assets/class_images/chicken/p1/attack_r.png",
-        "assets/class_images/chicken/p1/idle_r.png",
+        "assets/class_images/chicken/p1/death.png",
         "assets/class_images/chicken/p1/idle_l.png",
-        "assets/class_images/chicken/p2/death.png",
-        "assets/class_images/chicken/p2/attack_r.png",
+        "assets/class_images/chicken/p1/idle_r.png",
         "assets/class_images/chicken/p2/attack_l.png",
-        "assets/class_images/chicken/p2/idle_r.png",
+        "assets/class_images/chicken/p2/attack_r.png",
+        "assets/class_images/chicken/p2/death.png",
         "assets/class_images/chicken/p2/idle_l.png",
+        "assets/class_images/chicken/p2/idle_r.png",
+        "assets/class_images/turkey/p1/attack_l.png",
         "assets/class_images/turkey/p1/attack_r.png",
         "assets/class_images/turkey/p1/death.png",
-        "assets/class_images/turkey/p1/idle_r.png",
-        "assets/class_images/turkey/p1/attack_l.png",
         "assets/class_images/turkey/p1/idle_l.png",
+        "assets/class_images/turkey/p1/idle_r.png",
+        "assets/class_images/turkey/p2/attack_l.png",
         "assets/class_images/turkey/p2/attack_r.png",
         "assets/class_images/turkey/p2/death.png",
-        "assets/class_images/turkey/p2/idle_r.png",
-        "assets/class_images/turkey/p2/attack_l.png",
         "assets/class_images/turkey/p2/idle_l.png",
-        "assets/health/stocks/1.png",
-        "assets/health/stocks/2.png",
-        "assets/health/stocks/3.png",
+        "assets/class_images/turkey/p2/idle_r.png",
         "assets/health/chicken/p1/health0.png",
         "assets/health/chicken/p1/health1.png",
         "assets/health/chicken/p1/health10.png",
@@ -81,6 +78,9 @@ let all_assets = vec![
         "assets/health/chicken/p2/health7.png",
         "assets/health/chicken/p2/health8.png",
         "assets/health/chicken/p2/health9.png",
+        "assets/health/stocks/1.png",
+        "assets/health/stocks/2.png",
+        "assets/health/stocks/3.png",
         "assets/health/turkey/p1/health0.png",
         "assets/health/turkey/p1/health1.png",
         "assets/health/turkey/p1/health10.png",
@@ -106,22 +106,36 @@ let all_assets = vec![
         "assets/maps/map_1/background.png",
         "assets/maps/map_1/miniplatform.png",
         "assets/maps/map_1/platform.png",
+        "assets/maps/map_2/airballoon.png",
+        "assets/maps/map_2/citymap1.png",
+        "assets/maps/map_2/citymap10.png",
+        "assets/maps/map_2/citymap11.png",
+        "assets/maps/map_2/citymap12.png",
+        "assets/maps/map_2/citymap13.png",
+        "assets/maps/map_2/citymap2.png",
+        "assets/maps/map_2/citymap3.png",
+        "assets/maps/map_2/citymap4.png",
+        "assets/maps/map_2/citymap5.png",
+        "assets/maps/map_2/citymap6.png",
+        "assets/maps/map_2/citymap7.png",
+        "assets/maps/map_2/citymap8.png",
+        "assets/maps/map_2/citymap9.png",
+        "assets/maps/map_2/cranechain.png",
         "assets/maps/map_2/citymap.png",
+        "assets/maps/map_2/cranebar.png",
         "assets/maps/map_2/left_floor.png",
         "assets/maps/map_2/right_floor.png",
-        "assets/maps/map_2/cranebar.png",
-        "assets/maps/map_2/cranechain.png",
-        "assets/maps/map_2/airballoon.png",
         "assets/rank_images/1.png",
         "assets/rank_images/2.png",
         "assets/rank_images/3.png",
         "assets/rank_images/4.png",
         "assets/rank_images/5.png",
+        "assets/selection/ready.png",
         "assets/welcome_screen/mainscreenbg.png",
         "assets/welcome_screen/welcome_logo.png",
-        "assets/selection/ready.png",
+        "assets/win_screen/trophy.png",
         "assets/win_screen/winscreen.png",
-        "assets/win_screen/trophy.png"
+        "assets/extra_effects/hit_effect.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 
@@ -135,9 +149,9 @@ let all_assets = vec![
                 "welcome" => screens::welcome::run(&tm).await,
                 "guide" => screens::guide::run().await,
                 "game" => {
-                    let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await;
-                    let winner = screens::game::run(&tm, game_info).await;
-                    let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner).await;
+                    let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await; //[0] is p1, [1] is p2, [2] is map
+                    let winner = screens::game::run(&tm, game_info.clone()).await;
+                    let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner, game_info[0].clone(), game_info[1].clone()).await;
                     player_info[0] = retscreen[0].clone();
                     player_info[1] = retscreen[1].clone();
                     let res = update_player_dbs(vec![player_info[0].clone(), player_info[1].clone()]).await;
