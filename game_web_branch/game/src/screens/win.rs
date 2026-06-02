@@ -46,7 +46,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
     let mut lbl_winner = Label::new(lbl_win_txt,550.0,800.0,35);
     lbl_winner.with_colors(BLACK, Some(LIGHTGRAY));
     let mut win_img = StillImage::new("", 640.0, 400.0, 300.0, 300.0, true, 1.0).await;
-    let mut img_background = StillImage::new("", screen_width(), screen_height(), 0.0, 0.0, true, 1.0).await;
+    let mut img_background = StillImage::new("", 1280.0, 960.0, 0.0, 0.0, true, 1.0).await;
     img_background.set_preload(tm.get_preload(&img_background_path).unwrap());
     let mut img_trophy = StillImage::new("", 100.0, 150.0, 590.0, 775.0, true, 1.0).await;
     img_trophy.set_preload(tm.get_preload(&img_trophy_path).unwrap());
