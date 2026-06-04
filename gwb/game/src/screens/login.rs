@@ -17,11 +17,12 @@ pub struct LoginRecord {
     pub username: String,
     pub password: String,
     pub rank: String,
-    pub money: String
+    pub money: String,
+    pub chicken_clown: bool,
 }
 impl LoginRecord {
-    pub fn new(id: i32, username: String, password: String, rank: String, money: String) -> Self {
-        LoginRecord { id: id, username: username, password: password, rank: rank, money: money }
+    pub fn new(id: i32, username: String, password: String, rank: String, money: String, chicken_clown: bool) -> Self {
+        LoginRecord { id: id, username: username, password: password, rank: rank, money: money, chicken_clown: chicken_clown}
     }
  }
 
@@ -66,6 +67,8 @@ pub async fn run() -> Vec<LoginRecord>{
     let mut lbl_p2 = Label::new("", 450.0, 110.0, 22);
     let mut ret_player_data: Vec<LoginRecord> = vec![];
 
+    let mut records_err = client.fetch_table::<DatabaseTable>("poultrywars").await;
+
     // let create_table_sql = "CREATE TABLE IF NOT EXISTS poultrywars (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, rank TEXT NOT NULL, money TEXT NOT NULL)";
     // if let Err(err) = client.execute_sql(create_table_sql).await {
     //     lbl_message.set_text(format!("Failed to ensure user table exists: {}", err));
@@ -92,10 +95,9 @@ pub async fn run() -> Vec<LoginRecord>{
             if username.is_empty() || password.is_empty() {
                 lbl_message.set_text("Please enter both a username and password.".to_string());
             } else {
-                let records_err = client.fetch_table::<DatabaseTable>("poultrywars").await;
                 let mut match_found = false;
-                if let Ok(records) = records_err {
-                    for player in &records {
+                if let Ok(records) = &records_err {
+                    for player in records {
                         if player.username == username && player.password == password {
                             match_found = true;
                         }
@@ -107,11 +109,13 @@ pub async fn run() -> Vec<LoginRecord>{
                             password,
                             rank: "0".to_string(),
                             money: "0".to_string(),
+                            chicken_clown: "f".to_string(),
                         };
 
                         match client.insert_record("poultrywars", &new_record).await {
                             Ok(id) => {
-                                lbl_message.set_text(format!("Account created (ID: {})", id));
+                                lbl_message.set_text("Account created");
+                                records_err = client.fetch_table::<DatabaseTable>("poultrywars").await;
                             }
                             Err(err) => {
                                 lbl_message.set_text(format!("Failed to insert record: {}", err));
@@ -131,16 +135,26 @@ pub async fn run() -> Vec<LoginRecord>{
             if username.is_empty() || password.is_empty() {
                 lbl_message.set_text("Please enter both a username and password.".to_string());
             } else {
-                let mut local_player_info = LoginRecord::new(0, "".to_string(), "".to_string(), "".to_string(), "".to_string());
-                let records_err = client.fetch_table::<DatabaseTable>("poultrywars").await;
-                if let Ok(records) = records_err {
-                    for player in &records {
+                let mut local_player_info = LoginRecord::new(0, "".to_string(), "".to_string(), "".to_string(), "".to_string(), false);
+                if let Ok(records) = &records_err {
+                    for player in records {
                         if player.username == username && player.password == password {
                             local_player_info.id = player.id.clone();
                             local_player_info.username = player.username.clone();
                             local_player_info.password = player.password.clone();
                             local_player_info.rank = player.rank.clone();
                             local_player_info.money = player.money.clone();
+                            match player.chicken_clown.as_str() {
+                                "t" => {
+                                    local_player_info.chicken_clown = true;
+                                }
+                                "f" => {
+                                    local_player_info.chicken_clown = false;
+                                }
+                                _ => {
+                                    {}
+                                }
+                            }
                             break
                         }
                     }
@@ -155,7 +169,7 @@ pub async fn run() -> Vec<LoginRecord>{
                     } else {
                         ret_player_data.push(local_player_info);
                     }
-                } else if let Err(e) = records_err {
+                } else if let Err(ref e) = records_err {
                     lbl_message.set_text(format!("FATAL: FETCH ERR: {}", e));
                 }
             }
@@ -167,9 +181,9 @@ pub async fn run() -> Vec<LoginRecord>{
         if guest_button.click() {
             // log in as guest1 on database, rank and money will not be counted for guests, if guest1 is already logged in, log in as guest2
             if ret_player_data.len() == 0 {
-                ret_player_data.push(LoginRecord { id: 0, username: "guest1".to_string(), password: "guest".to_string(), rank: "0".to_string(), money: "0".to_string() });
+                ret_player_data.push(LoginRecord { id: 0, username: "guest1".to_string(), password: "guest".to_string(), rank: "0".to_string(), money: "0".to_string(), chicken_clown: false});
             } else if ret_player_data.len() == 1{
-                ret_player_data.push(LoginRecord { id: 0, username: "guest2".to_string(), password: "guessed".to_string(), rank: "0".to_string(), money: "0".to_string() });
+                ret_player_data.push(LoginRecord { id: 0, username: "guest2".to_string(), password: "guessed".to_string(), rank: "0".to_string(), money: "0".to_string(), chicken_clown: false});
             }
         }
 

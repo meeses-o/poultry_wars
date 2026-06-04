@@ -2,31 +2,22 @@ mod database;
 
 use database::create_database_client;
 use database::DatabaseTable;
+use core::error;
 use std::error::Error;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> Result<(), Box<dyn Error>>{
     let client = create_database_client();
-
-    // println!("Reading full poultrywars table from the database...");
-
-    // let rows: Vec<DatabaseTable> = client.fetch_table("poultrywars").await?;
-    // if rows.is_empty() {
-    //     println!("No rows found in poultrywars.");
-    //     return Ok(());
-    // }
-
-    // println!("Found {} rows:\n", rows.len());
-    // for row in rows {
-    //     println!("ID: {}", row.id);
-    //     println!("username: {}", row.username);
-    //     println!("password: {}", row.password);
-    //     println!("rank: {}", row.rank);
-    //     println!("money: {}", row.money);
-    //     println!("---");
-    // }
-
-    client.execute_sql("ALTER TABLE poultrywars RENAME COLUMN ID TO id;").await?;
-
+    let records = client.fetch_table("poultrywars").await;
+    match records {
+        Ok(records_ok) => {
+            for record in &records_ok {
+                client.update_record_by_id("poultrywars", record.id as i64, "chicken_clown", "f").await?;
+            }
+        }
+        Err(e) => {
+            println!("Fetch failed because: {:?}", e); 
+        }
+    }
     Ok(())
 }

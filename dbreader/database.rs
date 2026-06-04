@@ -159,8 +159,8 @@ use serde::{Deserialize, Serialize};
 fn is_zero(num: &i32) -> bool {
     *num == 0
 }
-pub const TURSO_URL: &str = "";
-pub const TURSO_AUTH_TOKEN: &str = "";
+pub const TURSO_URL: &str = "https://poultrywars-butterbae247.aws-us-east-2.turso.io";
+pub const TURSO_AUTH_TOKEN: &str = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODAwNjIyNjUsImlkIjoiMDE5ZGJhYzQtYzQwMS03ZTE4LWE3MjUtYWI5MThlYTA1NDcyIiwicmlkIjoiNGFlYjY1NDItYTNhOC00YzhhLTkzMWItYmE0Njg1Zjg5MTAxIn0.5OvRUK-KRnxEZsgEpDEj6BP_qDjrjrcuT6_guoNPfRC4suCA-tzSbZD4k030dCJfCSu3qMgmL4Yo2F8w6pUbAw";
 
 // ============================================================================
 // CUSTOMIZE THIS STRUCT FOR YOUR DATABASE SCHEMA
@@ -188,6 +188,7 @@ pub struct DatabaseTable {
     pub password: String, 
     pub rank: String,
     pub money: String,
+    pub chicken_clown: String,
 }
 
 // ============================================================================

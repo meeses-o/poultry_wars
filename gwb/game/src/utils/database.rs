@@ -173,6 +173,7 @@ pub struct DatabaseTable {
     pub password: String, 
     pub rank: String,
     pub money: String,
+    pub chicken_clown: String,
 }
 
 // ============================================================================

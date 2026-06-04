@@ -92,7 +92,7 @@ Then in the main loop you would use:
 */
 
 #[cfg(feature = "scale")]
-use crate::utils::scale::mouse_position_world as mouse_position;
+// use crate::utils::scale::mouse_position_world as mouse_position;
 use crate::utils::scale::mouse_position_world;
 use macroquad::prelude::*;
 

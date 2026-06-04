@@ -5,10 +5,9 @@ use crate::ui::label::Label;
 use crate::utils::preload_image::TextureManager;
 use crate::screens::login::LoginRecord;
 use crate::utils::rank_calculator::calc_rank;
-use crate::ui::grid::draw_grid;
 
 //winner = 1; p1, etc.
-pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, winner: bool, p1_class: String, p2_class: String) -> Vec<LoginRecord> {
+pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, winner: bool, p1_class: String, p2_class: String) -> (LoginRecord, LoginRecord, String) {
     let radius: f32 = 300.0;
     let mut angle: f32 = 0.0;
     let mut orbit_x = 0.0;
@@ -21,7 +20,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
     let img_trophy_path:String;
     let mut user1_local = user1.clone();
     let mut user2_local = user2.clone();
-    let retscreen = LoginRecord::new(0, "".to_string(), "".to_string(), "".to_string(), "".to_string());
+    let retscreen = String::new();
     
     img_background_path = "assets/win_screen/winscreen.png".to_string();
     if winner {
@@ -41,7 +40,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
         user2_local.money = format!("{}", money);
         img_trophy_path = format!("assets/rank_images/{}.png", calc_rank(&user2_local.rank))
     }
-    let mut ret_vec = vec![user1_local, user2_local, retscreen];
+    let mut ret_vec = (user1_local, user2_local, retscreen);
 
     let mut lbl_winner = Label::new(lbl_win_txt,550.0,800.0,35);
     lbl_winner.with_colors(BLACK, Some(LIGHTGRAY));
@@ -65,7 +64,7 @@ pub async fn run(tm: &TextureManager, user1: &LoginRecord, user2: &LoginRecord, 
     loop {
         img_background.draw();
         if btn_playagain.click(){
-            ret_vec[2].username = "game".to_string();
+            ret_vec.2 = "welcome".to_string();
             return ret_vec;
         }
         img_trophy.set_angle(angle);

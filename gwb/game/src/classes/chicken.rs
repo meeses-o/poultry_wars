@@ -1,11 +1,11 @@
 //Created by Oliver
-//May 13th 2026
+//Apr 24th 2026
 
 use macroquad::prelude::*;
 use crate::ui::still_image::StillImage;
 use crate::utils::preload_image::TextureManager;
 
-pub struct Turkey{
+pub struct Chicken{
     tm: TextureManager,
     view: StillImage,
     health: i32,
@@ -17,22 +17,21 @@ pub struct Turkey{
     accell: Vec2,               //Current accellerations in the x and y
     jump_posib: bool,
     start_pos: Vec2,
-    attack: bool,
+    attack: bool,               //true while animation is playing
     last_attack_time: f64,
     side: bool,                 //left = false, right = true
-    attack_clock: bool,
+    attack_clock: bool,         //true for 1 frame
     attack_cooldown: f32,
-    last_dash_time: f64,
-    dash_possible: bool,
+    slam: bool,
     hit: bool,
     hit_since: f64,
     hitmarker: StillImage
 }
 
-impl Turkey {
+impl Chicken {
     pub async fn new(tm:&TextureManager,x:f32, y:f32, player: String, start_pos: Vec2) -> Self {
         if player == "p1".to_string() {
-            Turkey {
+            Chicken {
                 tm: tm.clone(),
                 view: StillImage::new("", 50.0, 100.0, x, y, true, 1.0).await,
                 health: 10,
@@ -48,15 +47,14 @@ impl Turkey {
                 last_attack_time: -0.5,
                 side: false,
                 attack_clock: false,
-                attack_cooldown: 1.0,
-                last_dash_time: 0.0,
-                dash_possible: true,
+                attack_cooldown: 0.5,
+                slam: false,
                 hit: false,
                 hit_since: 0.0,
                 hitmarker: StillImage::new("", 100.0, 100.0, 0.0, 0.0, true, 1.0).await
             }  
         } else {
-            Turkey {
+            Chicken {
                 tm: tm.clone(),
                 view: StillImage::new("", 50.0, 100.0, x, y, true, 1.0).await,
                 health: 10,
@@ -72,9 +70,8 @@ impl Turkey {
                 last_attack_time: -0.5,
                 side: true,
                 attack_clock: false,
-                attack_cooldown: 1.0,
-                last_dash_time: 0.0,
-                dash_possible: true,
+                attack_cooldown: 0.5,
+                slam: false,
                 hit: false,
                 hit_since: 0.0,
                 hitmarker: StillImage::new("", 100.0, 100.0, 0.0, 0.0, true, 1.0).await
@@ -83,8 +80,8 @@ impl Turkey {
     }
 
     pub fn init(&mut self) {
-        self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_r.png", self.player)).unwrap());
-        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/turkey/{}/health10.png", self.player)).unwrap());
+        self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
+        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/chicken/{}/health10.png", self.player)).unwrap());
         self.stock_counter.set_preload(self.tm.get_preload("assets/health/stocks/3.png").unwrap());
     }
 
@@ -101,12 +98,12 @@ impl Turkey {
 
     pub fn framemove(&mut self) {
         let dt_scale = get_frame_time() * 166.0;
-
-        let mut topspeedx = 4.5;
-        if !self.dash_possible {
-            topspeedx = 10.0;
+        
+        let topspeedx = 5.5;
+        let mut topspeedy = 5.0;
+        if self.slam {
+            topspeedy = 9.0;
         }
-        let topspeedy = 5.0;
 
         self.speed += self.accell * dt_scale;
 
@@ -118,6 +115,7 @@ impl Turkey {
         } else {
             self.speed.x = 0.0;
         }
+
 
         if self.speed.x > topspeedx {
             self.speed.x = topspeedx;
@@ -131,14 +129,13 @@ impl Turkey {
 
         let mut pos = self.view.get_pos() + (self.speed * dt_scale);
         self.view.set_position(pos);
-
         if self.hit {
             if get_time() - self.hit_since > 0.08 {
                 pos.x -= 25.0;
                 self.hitmarker.set_position(pos);
-                self.hitmarker.set_preload(self.tm.get_preload(("assets/extra_effects/hit_effect.png")).unwrap());
-            } if get_time()- self.hit_since > 0.4{
-                // self.hit = false;
+                self.hitmarker.set_preload(self.tm.get_preload("assets/extra_effects/hit_effect.png").unwrap());
+            } if get_time() - self.hit_since > 0.4 {
+                //self.hit = false;
                 self.hitmarker.clear();
             }
         }
@@ -149,9 +146,9 @@ impl Turkey {
         self.speed.x -= 0.6 * dt_scale;
         self.side = false;
         if !self.attack {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_l.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).unwrap());
         } else {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_l.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).unwrap());
         }
     }
 
@@ -160,12 +157,11 @@ impl Turkey {
         self.speed.x += 0.6 * dt_scale;
         self.side = true;
         if !self.attack {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_r.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
         } else {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_r.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).unwrap());
         }
     }
-
     pub fn hit_animate(&mut self, op_side: bool) {
         self.hit = true;
         self.hit_since = get_time();
@@ -176,26 +172,14 @@ impl Turkey {
             self.speed.x -= 10.0;
         }
     }
-
+    
     pub fn get_side(&self) -> bool {
         self.side
     }
 
     fn jump(&mut self) {
-        self.speed.y = -6.0;
+        self.speed.y = -7.0;
         self.jump_posib = false;
-    }
-
-    fn dash(&mut self) {
-        if (get_time() - self.last_dash_time > 1.2) && self.dash_possible {
-            self.dash_possible = false;
-            self.last_dash_time = get_time();
-            if self.side {
-                self.speed.x = 10.0;
-            } else {
-                self.speed.x = -10.0;
-            }
-        }
     }
 
     fn attack(&mut self) {
@@ -207,18 +191,24 @@ impl Turkey {
         }
     }
 
+    fn slam(&mut self) {
+        self.speed.y = 9.0;
+        self.speed.x = 0.0;
+        self.slam = true;
+    }
+
     fn idle(&mut self) {
         if self.side {
             if !self.attack {
-                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_r.png", self.player)).unwrap());
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_r.png", self.player)).unwrap());
             } else {
-                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_r.png", self.player)).unwrap());
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_r.png", self.player)).unwrap());
             }
         } else {
             if !self.attack {
-            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/idle_l.png", self.player)).unwrap());
+            self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/idle_l.png", self.player)).unwrap());
             } else {
-                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/turkey/{}/attack_l.png", self.player)).unwrap());
+                self.view.set_preload(self.tm.get_preload(&format!("assets/class_images/chicken/{}/attack_l.png", self.player)).unwrap());
             }
         }
     }
@@ -237,7 +227,7 @@ impl Turkey {
         } else {
             self.health = 0;
         }
-        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/turkey/{}/health{}.png", self.player, self.health)).unwrap());
+        self.health_bar.set_preload(self.tm.get_preload(&format!("assets/health/chicken/{}/health{}.png", self.player, self.health)).unwrap());
         self.stock_counter.set_preload(self.tm.get_preload(&format!("assets/health/stocks/{}.png", self.stocks)).unwrap());
     }
 
@@ -254,6 +244,7 @@ impl Turkey {
             return false;
         }
     }
+
 
     pub fn check_floor_at(&mut self, floordims: Vec<Vec2>) {
         let dt_scale = get_frame_time() * 166.0;
@@ -288,6 +279,7 @@ impl Turkey {
                 temp_jump_possib = true;
             } else if prev_play_top >= plat_bottom - 0.01 {
                 self.view.set_y(plat_bottom);
+                
                 self.speed.y = 0.0;
             } else if prev_play_right <= plat_left + 0.01 {
                 self.view.set_x(plat_left - self.view.size().x);
@@ -307,8 +299,8 @@ impl Turkey {
 
         if temp_jump_possib {
             self.jump_posib = true;
-            if !self.dash_possible {
-                self.dash_possible = true;
+            if self.slam {
+                self.slam = false;
             }
         }
     }
@@ -316,7 +308,6 @@ impl Turkey {
     pub fn automove(&mut self) {
         if self.attack_clock {
             self.attack_clock = false;
-            
         }
 
         if self.player == "p1".to_string() {
@@ -340,8 +331,8 @@ impl Turkey {
                 self.attack();
             }
 
-            if is_key_down(KeyCode::S) {
-                self.dash();
+            if is_key_down(KeyCode::S) && !self.slam{
+                self.slam();
                 keypress = true;
             }
 
@@ -366,13 +357,13 @@ impl Turkey {
                 keypress = true;
             }
 
-            if is_key_down(KeyCode::M) {
-                self.attack();
+            if is_key_down(KeyCode::Down) {
+                self.slam();
+                keypress = true;
             }
 
-            if is_key_down(KeyCode::Down) {
-                self.dash();
-                keypress = true;
+            if is_key_down(KeyCode::M) {
+                self.attack();
             }
 
             if !keypress {
@@ -392,6 +383,6 @@ impl Turkey {
     }
 
     pub fn get_attack_dmg(&self) -> i32 {
-        2
+        1
     }
 }

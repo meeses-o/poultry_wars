@@ -152,13 +152,13 @@ let all_assets = vec![
                     let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await; //[0] is p1, [1] is p2, [2] is map
                     let winner = screens::game::run(&tm, game_info.clone()).await;
                     let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner, game_info[0].clone(), game_info[1].clone()).await;
-                    player_info[0] = retscreen[0].clone();
-                    player_info[1] = retscreen[1].clone();
+                    player_info[0] = retscreen.0.clone();
+                    player_info[1] = retscreen.1.clone();
                     let res = update_player_dbs(vec![player_info[0].clone(), player_info[1].clone()]).await;
                     if let Err(e) = res {
                         println!("Error updating player records: {}", e);
                     }
-                    retscreen[2].username.clone()
+                    retscreen.2.clone()
                 },
                 _ => break,
             };

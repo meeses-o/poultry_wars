@@ -36,25 +36,18 @@ Benefits:
 */
 
 use macroquad::prelude::*;
-use std::cell::RefCell;
+use std::cell::Cell;
 
-// Static variable to store the camera using RefCell for interior mutability
 thread_local! {
-    static CAMERA: RefCell<Camera2D> = RefCell::new(Camera2D {
-        zoom: vec2(1.0, 1.0),
-        target: vec2(0.0, 0.0),
-        ..Default::default()
-    });
-    
     // We'll store the current virtual resolution here - made pub so other modules can access it
-    pub static VIRTUAL_RESOLUTION: RefCell<(f32, f32)> = RefCell::new((1024.0, 768.0));
+    pub static VIRTUAL_RESOLUTION: Cell<(f32, f32)> = Cell::new((1024.0, 768.0));
 }
 
 /// Sets the camera to the virtual resolution and adjusts the scale
 pub fn use_virtual_resolution(virtual_width: f32, virtual_height: f32) {
     // Store the virtual resolution for other functions to use
     VIRTUAL_RESOLUTION.with(|res| {
-        *res.borrow_mut() = (virtual_width, virtual_height);
+        res.set((virtual_width, virtual_height));
     });
     
     let screen_aspect = screen_width() / screen_height();
@@ -72,18 +65,13 @@ pub fn use_virtual_resolution(virtual_width: f32, virtual_height: f32) {
         (width, height)
     };
 
-    CAMERA.with(|camera| {
-        let mut camera = camera.borrow_mut();
+    let camera = Camera2D {
+        zoom: vec2(2.0 / cam_width, 2.0 / cam_height),
+        target: vec2(virtual_width / 2.0, virtual_height / 2.0),
+        ..Default::default()
+    };
 
-        *camera = Camera2D {
-            zoom: vec2(2.0 / cam_width, 2.0 / cam_height),
-            target: vec2(virtual_width / 2.0, virtual_height / 2.0),
-            ..Default::default()
-        };
-
-        // Apply the camera settings to the game screen
-        set_camera(&*camera);
-    });
+    set_camera(&camera);
 }
 
 /// Function to get the mouse position in world coordinates based on the current camera state
@@ -91,7 +79,7 @@ pub fn mouse_position_world() -> (f32, f32) {
     let (mouse_x, mouse_y) = ::macroquad::input::mouse_position();  // Get the raw mouse position
 
     VIRTUAL_RESOLUTION.with(|res| {
-        let (virtual_width, virtual_height) = *res.borrow();
+        let (virtual_width, virtual_height) = res.get();
         
         // Get screen dimensions
         let screen_width = screen_width();
