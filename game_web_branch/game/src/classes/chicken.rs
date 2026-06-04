@@ -130,13 +130,13 @@ impl Chicken {
         let mut pos = self.view.get_pos() + (self.speed * dt_scale);
         self.view.set_position(pos);
         if self.hit {
-            if get_time() - self.hit_since > 2.0 {
+            if get_time() - self.hit_since > 0.08 {
                 pos.x -= 25.0;
                 self.hitmarker.set_position(pos);
                 self.hitmarker.set_preload(self.tm.get_preload(("assets/extra_effects/hit_effect.png")).unwrap());
-            } else{
-                self.hit = false;
-                self.hitmarker.set_preload(self.tm.get_preload(("")).unwrap());
+            } if get_time() - self.hit_since > 0.4 {
+                //self.hit = false;
+                 self.hitmarker.clear();
             }
         }
     }
@@ -165,10 +165,11 @@ impl Chicken {
     pub fn hit_animate(&mut self, op_side: bool) {
         self.hit = true;
         self.hit_since = get_time();
+        self.speed.y -= 3.0;
         if op_side {
-            self.speed.x += 4.0;
+            self.speed.x += 10.0;
         } else {
-            self.speed.x -= 4.0;
+            self.speed.x -= 10.0;
         }
     }
     
