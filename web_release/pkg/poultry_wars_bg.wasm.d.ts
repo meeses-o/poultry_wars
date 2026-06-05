@@ -2,6 +2,7 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export const main: (a: number, b: number) => number;
+export const macroquad_audio_crate_version: () => number;
 export const allocate_vec_u8: (a: number) => number;
 export const crate_version: () => number;
 export const file_loaded: (a: number) => void;

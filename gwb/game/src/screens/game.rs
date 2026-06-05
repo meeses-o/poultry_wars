@@ -14,8 +14,18 @@ use crate::utils::preload_image::TextureManager;
 use crate::utils::player_type::PlayerType;
 use crate::utils::map_type::MapType;
 use crate::utils::scale::use_virtual_resolution;
+use macroquad::audio::{load_sound, play_sound, PlaySoundParams};
 
 pub async fn run(tm: &TextureManager, game_info: Vec<String>) -> bool {
+
+    let music = load_sound("assets/pwars_theme.ogg").await.unwrap();
+    play_sound(
+        &music,
+        PlaySoundParams {
+            volume: 0.5,
+            looped: true
+        },
+    );
     
     let mut map = if game_info[2] == "dirt".to_string() {
         MapType::Map1(Map1::new(tm.clone()).await)

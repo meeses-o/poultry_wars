@@ -6,6 +6,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly main: (a: number, b: number) => number;
+  readonly macroquad_audio_crate_version: () => number;
   readonly allocate_vec_u8: (a: number) => number;
   readonly crate_version: () => number;
   readonly file_loaded: (a: number) => void;

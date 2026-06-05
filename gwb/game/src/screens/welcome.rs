@@ -7,6 +7,7 @@ use crate::ui::text_button::TextButton;
 use crate::ui::still_image::StillImage;
 use crate::utils::preload_image::TextureManager;
 use crate::utils::scale::use_virtual_resolution;
+use macroquad::audio::{load_sound, play_sound, PlaySoundParams};
 
 
 pub async fn run(tm: &TextureManager) -> String{
@@ -36,6 +37,14 @@ pub async fn run(tm: &TextureManager) -> String{
     let mut img_bkg = StillImage::new("", 1280.0, 960.0, 0.0, 0.0, true, 1.0).await;
     img_bkg.set_preload(tm.get_preload("assets/welcome_screen/mainscreenbg.png").unwrap());
 
+    let music = load_sound("assets/pwars_theme.ogg").await.unwrap();
+    play_sound(
+        &music,
+        PlaySoundParams {
+            volume: 0.5,
+            looped: true
+        },
+    );
     loop {
         use_virtual_resolution(1280.0, 960.0);
         clear_background(BEIGE);
