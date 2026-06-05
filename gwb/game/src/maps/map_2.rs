@@ -13,6 +13,10 @@ pub struct Map2 {
     background: StillImage,
     cranechain: StillImage,
     balloon: StillImage, // Added missing field
+    bird: StillImage,
+    bird_wait_timer: f64,
+    bird_flap_timer: f64,
+    bird_flap_state: bool,
     spawn_p1: Vec2,
     spawn_p2: Vec2,
     tm: TextureManager,
@@ -30,6 +34,10 @@ impl Map2 {
             background: StillImage::new("", 1280.0, 960.0, 0.0, 0.0, true, 1.0).await,
             cranechain: StillImage::new("", 15.0, 198.0, 650.0, 385.0, true, 1.0).await,
             balloon: StillImage::new("", 100.0, 120.0, -100.0, 592.7, true, 1.0).await,
+            bird:  StillImage::new("", 50.0, 50.0, 0.0, 300.0, true, 1.0).await,
+            bird_wait_timer: 0.0,
+            bird_flap_timer: 0.0,
+            bird_flap_state: true,
             spawn_p1: Vec2::new(160.0, 400.0),
             spawn_p2: Vec2::new(1120.0, 400.0),
             tm: tm,
@@ -46,6 +54,18 @@ impl Map2 {
         self.background.set_preload(self.tm.get_preload("assets/maps/map_2/citymap1.png").unwrap());
         self.cranechain.set_preload(self.tm.get_preload("assets/maps/map_2/cranechain.png").unwrap());
         self.balloon.set_preload(self.tm.get_preload("assets/maps/map_2/airballoon.png").unwrap());
+    }
+
+    fn move_bird(&mut self, dt: f32) {
+        self.bird.set_x(self.bird.get_x()+(180.0*dt));
+        if get_time() - self.bird_flap_timer > 0.6 {
+            self.bird_flap_timer = get_time();
+            if self.bird_flap_state {
+                self.bird_flap_state = false;
+            } else {
+                self.bird_flap_state = true;
+            }
+        }
     }
 
     pub fn tick(&mut self) {
@@ -66,9 +86,34 @@ impl Map2 {
             self.balloon.set_y(self.balloon.get_y()+(-153.8 * dt * 0.25));
         }
 
+
+        //bird
+        if self.bird_flap_state {
+            self.bird.set_preload(self.tm.get_preload("assets/maps/map_2/bird_up.png").unwrap());
+        } else {
+            self.bird.set_preload(self.tm.get_preload("assets/maps/map_2/bird_down.png").unwrap());
+        }
+        if self.bird.get_x() < 800.0 {
+            self.move_bird(dt);
+        } else {
+            if self.bird_wait_timer == 0.0 {
+                self.bird_wait_timer = get_time();
+            }
+            if get_time() - self.bird_wait_timer < 3.0 {
+                self.bird.set_preload(self.tm.get_preload("assets/maps/map_2/bird_idle.png").unwrap());
+            } else {
+                self.move_bird(dt);
+                if self.bird.get_x() > 1280.0 {
+                    self.bird.set_x(0.0);
+                    self.bird_wait_timer = 0.0;
+                }
+            }
+        }
+
+        //Animated bkg
         if get_time() - self.last_bkg_time > 0.4 {
             self.last_bkg_time = get_time();
-            if self.bkg_img_counter > 12 {   //TODO: Set limit to total frames made
+            if self.bkg_img_counter > 12 {
                 self.bkg_img_counter = 1;
             } else {
                 self.bkg_img_counter += 1;
@@ -89,6 +134,7 @@ impl Map2 {
         self.leftfloor.draw();
         self.rightfloor.draw();
         self.barplatform.draw();
+        self.bird.draw();
     }
 
     #[allow(dead_code)]

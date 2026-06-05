@@ -35,7 +35,7 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let tm = TextureManager::new();
-let all_assets = vec![
+    let all_assets = vec![
         "assets/class_images/chicken/p1/attack_l.png",
         "assets/class_images/chicken/p1/attack_r.png",
         "assets/class_images/chicken/p1/death.png",
@@ -120,11 +120,14 @@ let all_assets = vec![
         "assets/maps/map_2/citymap7.png",
         "assets/maps/map_2/citymap8.png",
         "assets/maps/map_2/citymap9.png",
-        "assets/maps/map_2/cranechain.png",
         "assets/maps/map_2/citymap.png",
         "assets/maps/map_2/cranebar.png",
         "assets/maps/map_2/left_floor.png",
         "assets/maps/map_2/right_floor.png",
+        "assets/maps/map_2/cranechain.png",
+        "assets/maps/map_2/bird_down.png",
+        "assets/maps/map_2/bird_up.png",
+        "assets/maps/map_2/bird_idle.png",
         "assets/rank_images/1.png",
         "assets/rank_images/2.png",
         "assets/rank_images/3.png",
