@@ -33,7 +33,7 @@ impl PlayerType {
     pub fn get_side(&mut self) -> bool{
         match self {
             PlayerType::Chicken(c) => c.get_side(),
-            PlayerType::Turkey(t) => t.get_side()
+            PlayerType::Turkey(t) => t.get_side(),
         }
     }
 

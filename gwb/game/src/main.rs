@@ -35,7 +35,8 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let tm = TextureManager::new();
-    let all_assets = vec![
+let all_assets = vec![
+        "assets/pwars_theme.ogg",
         "assets/class_images/chicken/p1/attack_l.png",
         "assets/class_images/chicken/p1/attack_r.png",
         "assets/class_images/chicken/p1/death.png",
@@ -125,8 +126,8 @@ async fn main() {
         "assets/maps/map_2/left_floor.png",
         "assets/maps/map_2/right_floor.png",
         "assets/maps/map_2/cranechain.png",
-        "assets/maps/map_2/bird_down.png",
         "assets/maps/map_2/bird_up.png",
+        "assets/maps/map_2/bird_down.png",
         "assets/maps/map_2/bird_idle.png",
         "assets/rank_images/1.png",
         "assets/rank_images/2.png",
@@ -138,7 +139,17 @@ async fn main() {
         "assets/welcome_screen/welcome_logo.png",
         "assets/win_screen/trophy.png",
         "assets/win_screen/winscreen.png",
-        "assets/extra_effects/hit_effect.png"
+        "assets/extra_effects/hit_effect.png",
+        "assets/cutscenes/scenekill1.png",
+        "assets/cutscenes/scenekill2.png",
+        "assets/cutscenes/scenekill3.png",
+        "assets/cutscenes/scenekill4.png",
+        "assets/cutscenes/scenekill5.png",
+        "assets/cutscenes/scenekill6.png",
+        "assets/cutscenes/scenelookup.png",
+        "assets/cutscenes/scenestart.png",
+        "assets/cutscenes/the_murderer.png",
+        "assets/cutscenes/evil_chicken.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 
