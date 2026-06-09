@@ -5,7 +5,6 @@ Describtion: A guide screen helping the user to navigate through the game and mo
  */
 
 use macroquad::prelude::*;
-use crate::ui::grid::{ draw_grid };
 use crate::ui::label::Label;
 use crate::ui::text_button::TextButton;
 use crate::utils::scale::use_virtual_resolution;
@@ -40,7 +39,6 @@ Your Rank,Username,Password",
 loop{
     use_virtual_resolution(1280.0, 960.0);
     clear_background(BEIGE);
-    draw_grid(50.0, BLACK);
     lbl_guide.draw();
     lbl_movement.draw();
     lbl_special.draw();

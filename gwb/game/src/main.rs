@@ -36,7 +36,6 @@ fn window_conf() -> Conf {
 async fn main() {
     let tm = TextureManager::new();
 let all_assets = vec![
-        "assets/pwars_theme.ogg",
         "assets/class_images/chicken/p1/attack_l.png",
         "assets/class_images/chicken/p1/attack_r.png",
         "assets/class_images/chicken/p1/death.png",
@@ -140,16 +139,16 @@ let all_assets = vec![
         "assets/win_screen/trophy.png",
         "assets/win_screen/winscreen.png",
         "assets/extra_effects/hit_effect.png",
-        "assets/cutscenes/scenekill1.png",
-        "assets/cutscenes/scenekill2.png",
-        "assets/cutscenes/scenekill3.png",
-        "assets/cutscenes/scenekill4.png",
-        "assets/cutscenes/scenekill5.png",
-        "assets/cutscenes/scenekill6.png",
-        "assets/cutscenes/scenelookup.png",
-        "assets/cutscenes/scenestart.png",
         "assets/cutscenes/the_murderer.png",
-        "assets/cutscenes/evil_chicken.png"
+        "assets/cutscenes/evil_chicken.png",
+        "assets/cutscenes/scene1.png",
+        "assets/cutscenes/scene2.png",
+        "assets/cutscenes/scene5.png",
+        "assets/cutscenes/scene6.png",
+        "assets/cutscenes/scene7.png",
+        "assets/cutscenes/scene8.png",
+        "assets/cutscenes/scene4.png",
+        "assets/cutscenes/scene3.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 
@@ -163,6 +162,7 @@ let all_assets = vec![
                 "welcome" => screens::welcome::run(&tm).await,
                 "guide" => screens::guide::run().await,
                 "game" => {
+                    screens::cutscene::run(&tm).await;
                     let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await; //[0] is p1, [1] is p2, [2] is map
                     let winner = screens::game::run(&tm, game_info.clone()).await;
                     let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner, game_info[0].clone(), game_info[1].clone()).await;

@@ -11,7 +11,7 @@ def generate_rust_asset_list(assets_dir="assets"):
 
     for root, _, files in os.walk(base_path):
         for file in files:
-            if file.startswith('.'):
+            if file.startswith('.') or file.endswith(".ogg"):
                 continue
             full_path = Path(root) / file
             relative_path = full_path.relative_to(base_path.parent)
