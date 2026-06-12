@@ -1,3 +1,6 @@
+//Created by oliver&mujib
+//updates rank and money and displays win info
+
 use macroquad::prelude::*;
 use crate::ui::text_button::TextButton;
 use crate::ui::still_image::StillImage;

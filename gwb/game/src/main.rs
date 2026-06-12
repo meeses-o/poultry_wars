@@ -136,6 +136,7 @@ let all_assets = vec![
         "assets/selection/ready.png",
         "assets/welcome_screen/mainscreenbg.png",
         "assets/welcome_screen/welcome_logo.png",
+        "assets/welcome_screen/tutorial.png",
         "assets/win_screen/trophy.png",
         "assets/win_screen/winscreen.png",
         "assets/extra_effects/hit_effect.png",
@@ -148,7 +149,10 @@ let all_assets = vec![
         "assets/cutscenes/scene7.png",
         "assets/cutscenes/scene8.png",
         "assets/cutscenes/scene4.png",
-        "assets/cutscenes/scene3.png"
+        "assets/cutscenes/scene3.png",
+        "assets/cutscenes/chicken2.png",
+        "assets/cutscenes/chicken3.png",
+        "assets/cutscenes/chicken1.png"
     ];
     tm.preload_with_loading_screen(&all_assets, None).await;
 
@@ -162,8 +166,8 @@ let all_assets = vec![
                 "welcome" => screens::welcome::run(&tm).await,
                 "guide" => screens::guide::run().await,
                 "game" => {
-                    screens::cutscene::run(&tm).await;
                     let game_info = screens::selection::run(&tm, &player_info[0].username, &player_info[1].username).await; //[0] is p1, [1] is p2, [2] is map
+                    screens::cutscene::run(&tm).await;
                     let winner = screens::game::run(&tm, game_info.clone()).await;
                     let retscreen = screens::win::run(&tm, &player_info[0], &player_info[1], winner, game_info[0].clone(), game_info[1].clone()).await;
                     player_info[0] = retscreen.0.clone();

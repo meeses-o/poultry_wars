@@ -254,6 +254,7 @@ impl Label {
         }
     }
     
+    
     // Getter for height (fixed height or calculated content height)
     #[allow(unused)]
     pub fn get_height(&self) -> Option<f32> {

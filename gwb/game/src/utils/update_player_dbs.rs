@@ -1,3 +1,7 @@
+//Created by oliver
+//2026-05-28
+//updates database given the player records
+
 use crate::utils::database::create_database_client;
 use crate::screens::login::LoginRecord;
 
@@ -15,6 +19,8 @@ pub async fn update_player_dbs(info: Vec<LoginRecord>) -> Result<(), Box<dyn std
     
     Ok(())
 }
+
+//Descriptive error code
 
 // pub async fn update_player_dbs(info: Vec<LoginRecord>) -> Result<(), Box<dyn std::error::Error>> {
 //     if info.len() < 2 {

@@ -1,3 +1,7 @@
+//Created by oliver
+//2026-05-24
+//Used to connect MapType to the map modules.
+
 use macroquad::prelude::*;
 use crate::ui::still_image::StillImage;
 use crate::maps::map_1::Map1;

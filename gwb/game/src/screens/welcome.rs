@@ -1,6 +1,6 @@
 //Created by Oliver
 //Apr 24th 2026
-//Test screen
+//Main welcome screen
 
 use macroquad::prelude::*;
 use crate::ui::text_button::TextButton;
@@ -33,6 +33,9 @@ pub async fn run(tm: &TextureManager) -> String{
     );
     let mut img_logo = StillImage::new("", 500.0, 400.0, 330.0, 0.0, false, 10.0).await;
     img_logo.set_preload(tm.get_preload("assets/welcome_screen/welcome_logo.png").unwrap());
+    let mut img_tut = StillImage::new("", 500.0, 400.0, 825.0, 560.0, false, 10.0).await;
+    img_tut.set_preload(tm.get_preload("assets/welcome_screen/tutorial.png").unwrap());
+    img_tut.set_angle(0.3);
 
     let mut img_bkg = StillImage::new("", 1280.0, 960.0, 0.0, 0.0, true, 1.0).await;
     img_bkg.set_preload(tm.get_preload("assets/welcome_screen/mainscreenbg.png").unwrap());
@@ -50,6 +53,7 @@ pub async fn run(tm: &TextureManager) -> String{
         clear_background(BEIGE);
         img_bkg.draw();
         img_logo.draw();
+        img_tut.draw();
         if btn_game.click() {
             return "game".to_string();
         }
@@ -57,6 +61,7 @@ pub async fn run(tm: &TextureManager) -> String{
             return "guide".to_string();
         }
         img_logo.set_zoom(((1.0*get_time().sin())+9.0) as f32);
+        img_tut.set_zoom(((1.0*get_time().sin())+2.0) as f32);
         next_frame().await
     }
 }

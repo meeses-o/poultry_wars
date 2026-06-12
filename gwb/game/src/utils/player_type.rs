@@ -1,3 +1,7 @@
+//Created by oliver
+//2026-05-24
+//Used to connect PlayerType to the player modules.
+
 use macroquad::prelude::*;
 use crate::classes::chicken::Chicken;
 use crate::classes::turkey::Turkey;

@@ -1,6 +1,6 @@
 //created by cameron
 //date: 2026-05-12
-//map 2 module with background, floors, and a moving balloon that loops every 10 seconds
+//map 2 module with background, floors, and a moving balloon that loops every 10 seconds, and a flying bird
 
 use macroquad::prelude::*;
 use crate::ui::still_image::StillImage;

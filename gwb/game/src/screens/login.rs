@@ -98,7 +98,7 @@ pub async fn run() -> Vec<LoginRecord>{
                 let mut match_found = false;
                 if let Ok(records) = &records_err {
                     for player in records {
-                        if player.username == username && player.password == password {
+                        if player.username.to_lowercase() == username.to_lowercase() && player.password.to_lowercase() == password.to_lowercase() {
                             match_found = true;
                         }
                     }
@@ -113,7 +113,7 @@ pub async fn run() -> Vec<LoginRecord>{
                         };
 
                         match client.insert_record("poultrywars", &new_record).await {
-                            Ok(id) => {
+                            Ok(_id) => {
                                 lbl_message.set_text("Account created");
                                 records_err = client.fetch_table::<DatabaseTable>("poultrywars").await;
                             }
@@ -138,7 +138,7 @@ pub async fn run() -> Vec<LoginRecord>{
                 let mut local_player_info = LoginRecord::new(0, "".to_string(), "".to_string(), "".to_string(), "".to_string(), false);
                 if let Ok(records) = &records_err {
                     for player in records {
-                        if player.username == username && player.password == password {
+                        if player.username.to_lowercase() == username.to_lowercase() && player.password.to_lowercase() == password.to_lowercase() {
                             local_player_info.id = player.id.clone();
                             local_player_info.username = player.username.clone();
                             local_player_info.password = player.password.clone();
@@ -161,7 +161,7 @@ pub async fn run() -> Vec<LoginRecord>{
                     if local_player_info.username == "".to_string() {
                         lbl_message.set_text("User or pass do not exist");
                     } else if ret_player_data.len() > 0 {
-                        if ret_player_data[0].username == local_player_info.username && ret_player_data[0].password == local_player_info.password {
+                        if ret_player_data[0].username.to_lowercase() == local_player_info.username.to_lowercase() && ret_player_data[0].password.to_lowercase() == local_player_info.password.to_lowercase() {
                             lbl_message.set_text("User already playing");
                         } else {
                             ret_player_data.push(local_player_info);

@@ -20,9 +20,9 @@ In the game you have keys as                             or TURKEYS",
         50.0, 50.0, 40);
     let mut lbl_movement = Label::new(
         "Player 1		                            Player 2
-A- move left	                        - move left
-D- move right	                       - move right
-W- to jump		                         - to jump
+A- move left	                     Left - move left
+D- move right	                  Right - move right
+W- to jump		                      Up - to jump
 Spacebar - to attack 	               M - to attack
 
 

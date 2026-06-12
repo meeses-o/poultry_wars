@@ -1,5 +1,6 @@
 //Created by Oliver
 //Apr 24th 2026
+//Chicken player class
 
 use macroquad::prelude::*;
 use crate::ui::still_image::StillImage;

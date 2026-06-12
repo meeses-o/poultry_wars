@@ -1,5 +1,6 @@
 //Created by Oliver
 //May 13th 2026
+//Turkey player class
 
 use macroquad::prelude::*;
 use crate::ui::still_image::StillImage;
