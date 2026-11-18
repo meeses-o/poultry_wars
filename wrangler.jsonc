@@ -1,0 +1,7 @@
+// Static site: serves web_release/ on pwars.oosmond.dev. Deploy with `npx wrangler deploy`.
+{
+  "name": "poultry-wars",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "./web_release" },
+  "routes": [{ "pattern": "pwars.oosmond.dev", "custom_domain": true }]
+}
