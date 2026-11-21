@@ -16,7 +16,7 @@
 </pre>
 </div>
 
-<p align="center">A local two-player platform fighter written in Rust. Chickens fight turkeys on the desktop or in the browser through WebAssembly, and online accounts keep track of each player's rank.</p>
+<p align="center">A local two-player platform fighter written in Rust using Macroquad. Play in browser through WebAssembly; online accounts keep track of each player's rank.</p>
 
 <p align="center">
   <a href="https://pwars.oosmond.dev"><img src="https://img.shields.io/badge/demo-live-brightgreen" alt="Live Demo"></a>
@@ -29,30 +29,28 @@
 <!-- TODO: add a gameplay GIF or screenshot here (drag the file into the GitHub editor to get a user-attachments URL) -->
 
 ## Please Note
-Poultry Wars was built by a small team (C.O.M Lab Studios) as a learning project.
-Accounts are for keeping score only. Do not reuse a real password: passwords are not hashed (see [Known Limitations](#known-limitations)).
+Poultry Wars was built by a small team (C.O.M Studios) as an in-class project.
+Accounts are for keeping score only. Do not reuse a real password, as passwords are not hashed (see [Known Limitations](#known-limitations)).
 
 ## Overview
 
 Poultry Wars is a fighting game in the style of platform brawlers, where two players share one keyboard. Each player logs in, picks a
-fighter (Chicken or Turkey) and a map, and then fights until one side runs out of stocks. The winner gains rank and coins,
-which are saved to a Turso database through an HTTP worker API, so progress carries over between sessions and devices.
-The game is written in Rust with the macroquad engine. One codebase builds both a native desktop app and a
-`wasm32-unknown-unknown` build for the web. A build script compiles the WASM, runs `wasm-bindgen`, and then patches the generated JS so that
-it works with macroquad's own loader. The finished site is served from Cloudflare at https://pwars.oosmond.dev.
+fighter (Chicken or Turkey) and a map, and then fights until one player runs out of stocks. The winner gains rank,
+which is saved to a Turso database through an Cloudflare worker API, so progress carries over between sessions and devices.
+The game is written in Rust with the macroquad engine. 
 
 ## Features
 
 - Local two-player combat on one keyboard
 - Two fighters, each with its own move:
-  - **Chicken:** ground slam with a faster fall
-  - **Turkey:** dash that more than doubles top speed
+  - **Chicken:** ground slam
+  - **Turkey:** dash
 - 10 HP per life and 3 stocks per player, with animated health bars and stock counters
 - Two maps with platform collision
-- Account creation and login; each win gives +1 rank and +50 coins
+- Account creation and login; each win gives +1 rank.
 - Five rank tiers, each with its own trophy image
 - Animated welcome cutscene, tutorial screen, and music
-- Runs natively (Linux, Windows, macOS) and in the browser
+- Runs in browser, /game exists for local play but is discontinued. Play in-browser for best experience.
 
 ## Controls
 
