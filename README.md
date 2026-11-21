@@ -75,20 +75,23 @@ The game is written in Rust with the macroquad engine.
 | Hosting | Cloudflare (static assets, deployed with `wrangler`) |
 
 ## Architecture
-<!-- TODO: diagram of the screen flow and the DB request path. game/filemap.png may work here. -->
+<img width="1880" height="2000" alt="pwars_diagram" src="https://github.com/user-attachments/assets/37716384-61d8-4bb3-8563-6b9c54ab30da" />
+
 
 ### main.rs (screen manager):
 Preloads every texture once through the `TextureManager`, then runs the login screen for both players. After that it loops over
-screens by name: each screen's `run()` is an async function that returns the name of the next screen to show.
+screens by name: each screen's `run()` is an async function that returns the name of the next screen to show, excluding the main
+"game" block, where welcome passes "game" and then internal game screens pass back data.
 
 ```
-login ─▶ welcome ─┬─▶ guide
-                  └─▶ selection ─▶ game ─▶ win ─▶ (back to welcome)
+login ─▶ welcome ──▶ guide
+            └─▶ selection ─▶ game ─▶ win ─▶ (back to welcome)
 ```
 
 ### screens/:
-One file per screen: `login`, `welcome` (cutscene and main menu), `guide` (tutorial), `selection` (fighter and map),
-`game` (the match), and `win` (results). The win screen updates both players' rank and coins, then saves them with `update_player_dbs`.
+One file per screen: `login`, `welcome` and `guide` (tutorial and landing), `selection` (of player type and map),
+`game` (the actual game screen), and `win` (results). The win screen updates both players' rank and displays the rank of the winner, 
+then saves them with `update_player_dbs`.
 
 ### classes/ (Chicken, Turkey):
 Each fighter owns its own physics (acceleration, deceleration, top speed, gravity), input handling, attack state, health, and stocks.
@@ -125,80 +128,49 @@ Because of this, the game keeps rendering while it waits for the network, with n
 - Login downloads the whole `poultrywars` table and checks credentials on the client, so any client can read every account.
 - The worker has no per-user authentication.
 - The web build lives in a separate copy of the source (`gwb/`), and changes are carried over by hand (`gwb/changes/changes.txt`).
-- Rank and coin values are stored as strings and parsed with `unwrap()`, so bad data panics the game.
+- Rank values are stored as strings and parsed with `unwrap()`, so bad data panics the game.
 
 ## Getting Started
-Play it at https://pwars.oosmond.dev, or build it yourself.
-
-### Prerequisites
-Rust (stable), the `wasm32-unknown-unknown` target, `wasm-bindgen-cli` **0.2.106** (it must match the crate version), and Node.js (for the patch script).
-
-```bash
-rustup target add wasm32-unknown-unknown
-cargo install wasm-bindgen-cli --version 0.2.106
-```
-
-### Build & run
-```bash
-git clone https://github.com/meeses-o/poultry_wars.git
-cd poultry_wars
-
-# Desktop
-./run.sh
-
-# Web (outputs to web_release/)
-./build.sh
-python -m http.server -d web_release
-```
-
-### Deploy
-```bash
-npx wrangler deploy
-```
-
-### Using your own database
-Create a Turso table:
-```sql
-CREATE TABLE poultrywars (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL,
-  rank TEXT NOT NULL,
-  money TEXT NOT NULL
-);
-```
-Next, deploy a worker that forwards the client's JSON requests to Turso as SQL, and keep the Turso URL and token as worker secrets.
-Then set `WORKER_URL` in `game/src/utils/database.rs` (and in `gwb/game/src/utils/database.rs`) to your worker's URL, and rebuild.
-<!-- TODO: add the worker source to the repo (e.g. worker/) and link it here -->
+Play it live at https://pwars.oosmond.dev.
 
 ## Project Structure
 
 ```
-game/          Main Rust crate (desktop build)
+game/          Desktop Rust crate (discontinued)
+gwb/           Main Rust Build (Rust core that gets compiled to WASM)
   src/screens/   Login, welcome, guide, selection, game, win
   src/classes/   Chicken and Turkey fighters
   src/maps/      Map geometry
   src/ui/        Widgets
   src/utils/     Collision, DB client, texture preloading, ranks
   assets/        Sprites, maps, health bars, rank images
-gwb/           Web copy of the crate, plus notes on web-only changes
 web/           Web build workspace (HTML, CSS, JS helpers, wasm-bindgen output)
 web_release/   Files deployed to Cloudflare
 build.sh       Web build pipeline
 run.sh         Desktop run
 ```
 
-## Challenges & What I Learned
-<!-- TODO: rewrite these in your own voice. They are drafted from the commit history. -->
+## Challenges & What We Learned
 
 ### Getting macroquad and wasm-bindgen to cooperate
-<!-- What broke at first, how you found the cause, and why a post-build patch was the fix. -->
+When initially attempting to get the game working on the web,
+having macroquad attempt to work and draw nicely in WASM in a contained
+HTML environment was a real challenge. The game did not scale nicely inside its
+container, and many issues were being had with database.rs not being able to talk
+to our Turso. These issues were solved by writing custom JS glue, and implimenting a
+2d camera system inside the Rust core to deal with dynamic sizing. This taught us a lot
+about integrating Rust WASM with web environments, and how specifically the Web Assembly
+communicates with other JS through its glue.
 
 ### Database calls without blocking the game loop
-<!-- The polling bridge: why you couldn't simply await a JS promise from macroquad, and what you learned about the WASM/JS boundary. -->
+One issue that was had initially was that database calls would freeze the entire game, and cause
+the screen to flash black while running on the web. This was solved in win.rs by asyncronously 
+calling the database such that the rendering loop was never forced to pause to wait. 
 
 ### Migrating the database
-<!-- The team lost access to the original database. Explain how you moved to a database you control and put it behind your own worker and domain. -->
+After the class ended, we lost direct access to the old database, so upon recent revision of this project,
+Oliver used the old URL and key stored in the ENV of the old worker with a Rust script to migrate all 
+previous data to a new Turso databse, from which the current live build of the game now runs through the same worker.
 
 ### Cutscenes
 <!-- The welcome cutscene first stopped at a hard-coded frame index (img_scene == 9), which failed when switching to the angry-chicken images. Explain how you fixed it. -->
