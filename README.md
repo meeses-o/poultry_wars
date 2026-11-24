@@ -30,7 +30,7 @@
 
 ## Please Note
 Poultry Wars was built by a small team (C.O.M Studios) as an in-class project.
-Accounts are for keeping score only. Do not reuse a real password, as passwords are not hashed (see [Known Limitations](#known-limitations)).
+Accounts are for keeping score only. Do not reuse a real password, as passwords are not hashed (see [Future plans/add-ons](#known-limitations)).
 
 ## Overview
 
@@ -172,20 +172,22 @@ After the class ended, we lost direct access to the old database, so upon recent
 Oliver used the old URL and key stored in the ENV of the old worker with a Rust script to migrate all 
 previous data to a new Turso databse, from which the current live build of the game now runs through the same worker.
 
-### Cutscenes
-<!-- The welcome cutscene first stopped at a hard-coded frame index (img_scene == 9), which failed when switching to the angry-chicken images. Explain how you fixed it. -->
-
 ## Future plans/add-ons
 - [ ] Hash passwords and check logins on the worker, not the client
 - [ ] Per-user auth on the worker
-- [ ] Merge `gwb/` back into `game/` using `cfg(target_arch = "wasm32")`
-- [ ] Store rank and coins as integers
-- [ ] Spend coins on cosmetics
+- [ ] Update `/game` to match `/gwb`, potentially automate changes with a script
+- [ ] Implement store feature (use for coins in database)
+- [ ] Leaderboards
 - [ ] Online multiplayer
 
 ## Credits
-<!-- TODO: list each team member and what they built, plus art and music sources -->
-- Database module based on a template by Mathew Dusome
+**Team**
+- **Oliver Osmond** ([@o0smond](https://github.com/o0smond)): project lead, project structure, database, web deployment, player classes, screen manager, music
+- **Mujibullah Muhebullah** ([@mjv-7](https://github.com/mjv-7)): cutscenes, cutscene art, in-game rank managment, map design
+- **Cameron Sidlauskas** ([@ButterBae247](https://github.com/ButterBae247)): Majority of art, databasing, ui design
+
+**Thanks**
+- Some modules based on templates by Mathew Dusome
 
 ## License
 <!-- TODO: no LICENSE file yet. Add one (e.g. MIT), then add a badge as in the header. -->
