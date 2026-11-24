@@ -22,6 +22,7 @@
   <a href="https://pwars.oosmond.dev"><img src="https://img.shields.io/badge/demo-live-brightgreen" alt="Live Demo"></a>
   <img src="https://img.shields.io/badge/Rust-WASM-orange?logo=rust" alt="Rust">
   <img src="https://img.shields.io/badge/engine-macroquad-yellow" alt="macroquad">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
 </p>
 
 ---
@@ -190,4 +191,4 @@ previous data to a new Turso databse, from which the current live build of the g
 - Some modules based on templates by Mathew Dusome
 
 ## License
-<!-- TODO: no LICENSE file yet. Add one (e.g. MIT), then add a badge as in the header. -->
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
